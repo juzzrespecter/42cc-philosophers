@@ -6,12 +6,14 @@ DIR_SRCS	= srcs/
 DIR_OBJS	= objs/
 DIR_INC		= includes/
 
-SRCS		= philo.c
+SRCS		= philo.c \
+			  philo_ft.c \
+			  philo_start.c
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
-INC		= $(addprefix $(DIR_INC), philo.h)
+INC			= $(addprefix $(DIR_INC), philo.h)
 
-GCC		= gcc -Wall -Werror -Wextra
-RM		= rm -rf
+GCC			= gcc -Wall -Werror -Wextra
+RM			= rm -rf
 
 # ---- graphic ----
 LG	= \033[92m
@@ -29,7 +31,7 @@ $(NAME):	$(OBJS)
 $(DIR_OBJS)%.o:	$(DIR_SRCS)%.c $(INC)
 	@$(GCC) -c $< -I$(DIR_INC)
 	@echo "$(G)[OK]$(ST)\t$< compiled successfully."
-	@mkdir -f $(DIR_OBJS)
+	@mkdir -p $(DIR_OBJS)
 	@mv $(@F) $(DIR_OBJS)
 
 clean:
@@ -41,6 +43,10 @@ fclean:		clean
 	@echo "$(R)[RM]$(ST)\t$(NAME) removed."
 
 re:		fclean all
+
+normi:
+	@echo "\n$(G)NORMINETTE VERSION:\t\t`norminette -v`$(ST)"
+	@norminette srcs/*.c includes/*.h
 
 # --- err mgmt ---
 $(INC):
