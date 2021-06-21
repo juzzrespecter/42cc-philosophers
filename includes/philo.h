@@ -7,19 +7,30 @@
 # include <pthread.h>
 # include <string.h>
 
+typedef struct	s_philo
+{
+	int				id;
+	unsigned int	time[3];
+	pthread_t		*philo_thread;
+	pthread_mutex_t	*fork_left;
+	pthread_mutex_t	*fork_right;
+	//pthread_mutex_t	forks[2]; // 0 -> left, 1 -> right
+}				t_philo;
+
 typedef struct	s_philo_info
 {
-	unsigned long	n_of_philosophers;
-	unsigned long	time_to_die;
-	unsigned long	time_to_eat;
-	unsigned long	time_to_sleep;
-	unsigned long	entepima;
+	unsigned int		n_philo;
+	unsigned int		time_to_die;
+	unsigned int		time_to_eat;
+	unsigned int		time_to_sleep;
+	unsigned int		entepima;
+	pthread_mutex_t		**forks_arr;
+	pthread_t			**pthread_arr;
 }				t_philo_info;
 
-unsigned long	ft_atoul(char *a);
+unsigned int	ft_atou(char *a);
 int				ft_isdigit(int c);
-void			set_up_table(t_philo_info data);
+void			init_threads(t_philo_info *data);
 
-int	pthreads_test(t_philo_info data);  // tmp
 
 #endif
