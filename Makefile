@@ -1,6 +1,7 @@
 .PHONY:		all re bonus clean fclean
 
 NAME		= philo
+NAME_BONUS	= philo_bonus
 
 DIR_SRCS	= srcs/
 DIR_OBJS	= objs/
@@ -8,6 +9,7 @@ DIR_INC		= includes/
 
 SRCS		= philo.c \
 			  philo_ft.c \
+			  philo_parser.c \
 			  philo_start.c
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
 INC			= $(addprefix $(DIR_INC), philo.h)
@@ -48,6 +50,18 @@ normi:
 	@echo "\n$(G)NORMINETTE VERSION:\t\t`norminette -v`$(ST)"
 	@norminette srcs/*.c includes/*.h
 
+# ---- bonus -----
+SRCS_BONUS		= philo_bonus.c \
+				  philo_ft.c \
+				  phio_parser.c \
+				  philo_bonus_start.c
+OBJS_BONUS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
+
+bonus:			$(NAME_BONUS)
+$(NAME_BONUS):	$(OBJS_BONUS)
+	@$(GCC) -o $(NAME_BONUS) $(OBJS_BONUS)
+	@echo "$(G)[OK]$(ST)\t$(NAME_BONUS) created successfully."
+# ----------------
 # --- err mgmt ---
 $(INC):
 	@echo "$(R)[KO]$(ST)\tFile $(@F) cannot be found."

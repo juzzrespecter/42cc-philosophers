@@ -9,28 +9,35 @@
 
 typedef struct	s_philo
 {
-	int				id;
-	unsigned int	time[3];
 	pthread_t		*philo_thread;
-	pthread_mutex_t	*fork_left;
-	pthread_mutex_t	*fork_right;
-	//pthread_mutex_t	forks[2]; // 0 -> left, 1 -> right
+	int				id;
+	int				fork_flags[2]; // para que los muertos suelten los tenedores
+	unsigned int	time_since_last_meal;
+	pthread_mutex_t			*first_fork;
+	pthread_mutex_t			*second_fork;
+	//pthread_mutex_t			*monitor_lock;
 }				t_philo;
 
-typedef struct	s_philo_info
+typedef struct	s_data
 {
 	unsigned int		n_philo;
 	unsigned int		time_to_die;
 	unsigned int		time_to_eat;
 	unsigned int		time_to_sleep;
-	unsigned int		entepima;
-	pthread_mutex_t		**forks_arr;
-	pthread_t			**pthread_arr;
-}				t_philo_info;
+	int					everyone_alive_flag;
+	int					entepima;
+}				t_data;
 
+typedef struct	s_philo_data
+{
+	t_data *data;		// comun a todos los threads
+	t_philo *philo;		// dependente de cada thread
+}				t_philo_data;
+
+void			philo_err_mgmt(int argc, char **argv);
 unsigned int	ft_atou(char *a);
 int				ft_isdigit(int c);
-void			init_threads(t_philo_info *data);
+void			init_threads(t_data *data);
 
 
 #endif
