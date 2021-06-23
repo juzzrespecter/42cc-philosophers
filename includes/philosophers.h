@@ -9,13 +9,16 @@
 
 typedef struct	s_philo
 {
-	pthread_t		*philo_thread;
+	t_data	*data; // comun a todos los threads
+				   // ----------- informacion especifica de cada thread
+//	pthread_t		*philo_thread; why???
 	int				id;
 	int				fork_flags[2]; // para que los muertos suelten los tenedores
 	unsigned int	time_since_last_meal;
+	unsigned int	number_of_meals;
 	pthread_mutex_t			*first_fork;
 	pthread_mutex_t			*second_fork;
-	//pthread_mutex_t			*monitor_lock;
+	//pthread_mutex_t			*monitor_lock; // read-write time_since_last_meal (to test)
 }				t_philo;
 
 typedef struct	s_data
@@ -28,16 +31,13 @@ typedef struct	s_data
 	int					entepima;
 }				t_data;
 
-typedef struct	s_philo_data
-{
-	t_data *data;		// comun a todos los threads
-	t_philo *philo;		// dependente de cada thread
-}				t_philo_data;
-
-void			philo_err_mgmt(int argc, char **argv);
 unsigned int	ft_atou(char *a);
 int				ft_isdigit(int c);
+
+int				philo_err_mgmt(int argc, char **argv);
 void			init_threads(t_data *data);
+void			*monitor_routine(void *routine_args);
+void			*philosopher_routine(void *routine_args);
 
 
 #endif

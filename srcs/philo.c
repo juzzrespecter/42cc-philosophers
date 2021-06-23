@@ -14,7 +14,7 @@ static t_philo_info	init_data(int argc, char **argv)
 		data.entepima = ft_atou(argv[5]);
 	else
 		data.entepima = -1;
-	data.forks_arr = (pthread_mutex_t **)malloc(data.n_philo * sizeof(pthread_mutex_t *));
+/*	data.forks_arr = (pthread_mutex_t **)malloc(data.n_philo * sizeof(pthread_mutex_t *));
 	data.pthread_arr = (pthread_t **)malloc(data.n_philo * sizeof(pthread_t *));
 	index = 0;
 	while (index < data.n_philo)
@@ -23,7 +23,7 @@ static t_philo_info	init_data(int argc, char **argv)
 		pthread_mutex_init(data.forks_arr[index], NULL);
 		data.pthread_arr[index] = (pthread_t *)malloc(sizeof(pthread_t));
 		index++;
-	}
+	}*/
 	return (data);
 }
 
@@ -31,7 +31,8 @@ int	main(int argc, char **argv)
 {
 	t_philo_info	data;
 
-	philo_err_mgmt(argc, argv);
+	if (!philo_err_mgmt(argc, argv))
+		return (EXIT_FAILURE);
 	data = init_data(argc, argv);
 	init_threads(&data);
 	return (EXIT_SUCCESS);

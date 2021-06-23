@@ -1,6 +1,6 @@
 #include "philo.h"
 
-static void	print_and_exit(int id)
+static int	print_err(int id)
 {
 	static const char *error_msg[] = {
 		"invalid number of options provided to the program.",
@@ -12,7 +12,7 @@ static void	print_and_exit(int id)
 	};
 
 	printf("ERROR:\t%s\n", error_msg[id]);
-	exit(EXIT_FAILURE);
+	return (0);
 }
 
 static int	parse_input(char *input)
@@ -33,17 +33,17 @@ static int	parse_input(char *input)
 	return (1);
 }
 
-void	philo_err_mgmt(int argc, char **argv)
+int	philo_err_mgmt(int argc, char **argv)
 {
 	int	index;
 
 	index = 1;
 	if (argc < 5 || argc > 6)
-		print_and_exit(0);
+		return (print_err(0));
 	while (index < 5 || (index < 6 && argc == 6))
 	{
 		if (!parse_input(argv[index]))
-			print_and_exit(index);
+			return (print_err(index));
 		index++;
 	}
 }

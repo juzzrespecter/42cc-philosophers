@@ -10,9 +10,9 @@ DIR_INC		= includes/
 SRCS		= philo.c \
 			  philo_ft.c \
 			  philo_parser.c \
-			  philo_start.c
+			  philo_start.c # TO RM
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
-INC			= $(addprefix $(DIR_INC), philo.h)
+INC			= $(addprefix $(DIR_INC), philosophers.h)
 
 GCC			= gcc -Wall -Werror -Wextra
 RM			= rm -rf
