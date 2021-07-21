@@ -1,39 +1,37 @@
-#include "philo.h"
+#include "philosophers.h"
 
-static t_philo_info	init_data(int argc, char **argv)
+static t_data	*init_data(int argc, char **argv)
 {
+	t_data			*data;
 	unsigned int	index;
-	t_philo_info	data;
 
-	memset(&data, 0, sizeof(t_philo_info));
-	data.n_philo = ft_atou(argv[1]);
-	data.time_to_die = ft_atou(argv[2]);
-	data.time_to_eat = ft_atou(argv[3]);
-	data.time_to_sleep = ft_atou(argv[4]);
-	if (argc == 6)
-		data.entepima = ft_atou(argv[5]);
-	else
-		data.entepima = -1;
-/*	data.forks_arr = (pthread_mutex_t **)malloc(data.n_philo * sizeof(pthread_mutex_t *));
-	data.pthread_arr = (pthread_t **)malloc(data.n_philo * sizeof(pthread_t *));
 	index = 0;
-	while (index < data.n_philo)
+	data = malloc(sizeof(t_data));
+	data->n_philo = ft_atou(argv[1]);
+	data->time_to_die = ft_atou(argv[2]);
+	data->time_to_eat = ft_atou(argv[3]);
+	data->time_to_sleep = ft_atou(argv[4]);
+	if (argc == 6)
+		data->times_must_eat = ft_atou(argv[5]);
+	else
+		data->times_must_eat = -1;
+	data->pthread_arr = malloc(sizeof(pthread_t) * data->n_philo * 2);
+	data->fork_arr = malloc(sizeof(pthread_mutex_t) * data->n_philo);
+	if (!data->pthread_arr || !data->fork_arr)
+		return(NULL/* free func */);
+	while (index < data->n_philo)
 	{
-		data.forks_arr[index] = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-		pthread_mutex_init(data.forks_arr[index], NULL);
-		data.pthread_arr[index] = (pthread_t *)malloc(sizeof(pthread_t));
+		pthread_mutex_init(&data->fork_arr[index], 0);
 		index++;
-	}*/
+	}
+	data->everyone_alive_flag = 1;
 	return (data);
 }
 
 int	main(int argc, char **argv)
 {
-	t_philo_info	data;
-
 	if (!philo_err_mgmt(argc, argv))
 		return (EXIT_FAILURE);
-	data = init_data(argc, argv);
-	init_threads(&data);
+	init_threads(init_data(argc, argv));
 	return (EXIT_SUCCESS);
 }

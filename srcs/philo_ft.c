@@ -1,4 +1,14 @@
-#include "philo.h"
+#include "philosophers.h"
+
+long	get_time(void)
+{
+	struct timeval	time_s;
+	long time;
+
+	gettimeofday(&time_s, NULL);
+	time = time_s.tv_sec * 1000 + (long)time_s.tv_usec / 1000;
+	return (time);
+}
 
 int				ft_isdigit(int c)
 {

@@ -1,4 +1,4 @@
-#include "philo.h"
+#include "philosophers.h"
 
 static int	print_err(int id)
 {
@@ -46,4 +46,5 @@ int	philo_err_mgmt(int argc, char **argv)
 			return (print_err(index));
 		index++;
 	}
+	return (1);
 }

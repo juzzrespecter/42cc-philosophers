@@ -1,92 +1,68 @@
 #include "philosophers.h"
 
-void	destroy_arr(void **arr, unsigned int arr_size)
+void	wait_and_exit_threads(t_philo **philo_arr, t_data *data)
 {
 	unsigned int	index;
+	(void)	philo_arr;
 
 	index = 0;
-	while (index < arr_size)
+	while (index < (data->n_philo * 2))
 	{
-		free(arr[index]);
+		pthread_join(data->pthread_arr[index], 0);
 		index++;
 	}
-	free(arr);
-}
-
-t_pthread	**init_pthread_arr(unsigned int n_philo)
-{
-	unsigned int	index;
-	t_pthread		**pthread_arr;
-
+	/* dentro de exit func ??? */
 	index = 0;
-	pthread_arr = (pthread **)malloc(sizeof(pthread_t *) * n_philo);
-	while (index < n_philo)
+	while (index < data->n_philo)
 	{
-		pthread_arr[index] = (pthread *)malloc(sizeof(pthread_t));
+		pthread_mutex_destroy(&data->fork_arr[index]);
+//		free(philo_arr[index]);
 		index++;
 	}
-	return (pthread_arr);
+//	free(philo_arr);
+	printf("OK!\n");
 }
 
-t_pthread_mutex	**init_fork_arr(unsigned int n_philo)
+static t_philo	*philo_setup(unsigned int index, t_data *data)
 {
-	unsigned int	index;
-	t_phread_mutex	**fork_arr;
+	t_philo	*philo;
 
-	index = 0;
-	fork_arr = (t_pthread_mutex **)malloc(sizeof(pthread_mutex_t) * n_philo);
-	while (index < n_philo)
+	philo = malloc(sizeof(t_philo));
+	memset(philo, 0, sizeof(t_philo));
+	philo->data = data;
+	philo->id = index + 1;
+	if (!index % 2)
 	{
-		pthread_mutex_init(fork_arr[index], NULL);
-		index++;
+		philo->first_fork = &data->fork_arr[index];
+		philo->second_fork = &data->fork_arr[(index + 1) * (index + 1 < data->n_philo)];
 	}
-	return (fork_arr);
+	else
+	{
+		philo->first_fork = &data->fork_arr[(index + 1) * (index + 1 < data->n_philo)];
+		philo->second_fork = &data->fork_arr[index];
+	}
+	return (philo);
 }
-
-void	exit_threads()
-{
-}
-// detach monitors????
-// detach everything????
 
 void	init_threads(t_data *data)
 {
-	// init phtread arr
-	// init fork arr
-	// init philosophers arr
-	//
-
-
-
-
-
-
-
-
-
-
-
-
-}
-/*	unsigned int	index;
-	t_pthread		**pthread_arr;
-	t_pthread_mutex	**fork_arr;
 	t_philo			**philo_arr;
+	unsigned int	index;
 
+	if (!data)
+		return ;
+	print_data(data); // rm
+	philo_arr = malloc(sizeof(t_philo *) * data->n_philo);
+	/* malloc ctrl */
 	index = 0;
-	philo_arr = (t_philo **)malloc(sizeof(t_philo *) * data->n_philo);
-	while (index < data->n_philo)
+	while (index < data->n_philo) 
 	{
-		philo_arr[index] = (t_philo *)malloc(sizeof(t_philo));
-		philo_arr[index]->id = index + 1;
-		philo_arr[index]->philo_thread = data->pthread_arr[index];
-		philo_arr[index]->fork_left = data->forks_arr[index];
-		if (index == (data->n_philo - 1))
-			philo_arr[index]->fork_right = data->forks_arr[0];
-		else
-			philo_arr[index]->fork_right = data->forks_arr[index + 1];
-		pthread_create(data->pthread_arr[index], NULL, &philo_routine, \
-				(void *)philo_arr[index]);
+		philo_arr[index] = philo_setup(index, data);	
+		/* malloc ctrl */
+		pthread_create(&data->pthread_arr[index], NULL, philo_routine, (void *)philo_arr[index]);
+		pthread_create(&data->pthread_arr[index + data->n_philo], NULL, monitor_routine, (void *)philo_arr[index]);	
 		index++;
 	}
-	rm_threads(data, philo_arr);*/
+	wait_and_exit_threads(philo_arr, data);
+	// wait for threads to finish
+}

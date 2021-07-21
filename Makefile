@@ -10,7 +10,9 @@ DIR_INC		= includes/
 SRCS		= philo.c \
 			  philo_ft.c \
 			  philo_parser.c \
-			  philo_start.c # TO RM
+			  philo_init_threads.c \
+			  philo_routines.c \
+			  philo_debug.c
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
 INC			= $(addprefix $(DIR_INC), philosophers.h)
 
