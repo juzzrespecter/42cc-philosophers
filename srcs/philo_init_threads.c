@@ -29,15 +29,18 @@ static t_philo	*philo_setup(unsigned int index, t_data *data)
 
 	philo = malloc(sizeof(t_philo));
 	memset(philo, 0, sizeof(t_philo));
-	philo->data = data;
+	philo->common = data;
 	philo->id = index + 1;
-	if (!index % 2)
+	philo->monitor_lock = malloc(sizeof(pthread_mutex_t));
+	if (!(index % 2))
 	{
+//		printf("for %d | first fork: %d\n", index + 1, index);
 		philo->first_fork = &data->fork_arr[index];
 		philo->second_fork = &data->fork_arr[(index + 1) * (index + 1 < data->n_philo)];
 	}
 	else
 	{
+//		printf("for %d | first fork: %d\n", index + 1, (index + 1) * (index + 1 < data->n_philo));
 		philo->first_fork = &data->fork_arr[(index + 1) * (index + 1 < data->n_philo)];
 		philo->second_fork = &data->fork_arr[index];
 	}

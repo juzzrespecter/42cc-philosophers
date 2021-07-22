@@ -1,0 +1,136 @@
+philo: 20
+die: 250
+eat: 100
+sleep: 100
+must: -1
+0| 1 is thinking.
+0| 1 has taken a fork
+0| 1 has taken a fork
+0| 2 is thinking.
+0| 2 has taken a fork
+0| 1 [32mis eating.[0m
+0| 4 is thinking.
+0| 4 has taken a fork
+0| 4 has taken a fork
+0| 4 [32mis eating.[0m
+0| 5 is thinking.
+0| 6 is thinking.
+0| 6 has taken a fork
+0| 6 has taken a fork
+0| 6 [32mis eating.[0m
+0| 3 is thinking.
+0| 7 is thinking.
+0| 8 is thinking.
+0| 8 has taken a fork
+0| 8 has taken a fork
+0| 8 [32mis eating.[0m
+0| 9 is thinking.
+0| 10 is thinking.
+0| 10 has taken a fork
+0| 10 has taken a fork
+0| 10 [32mis eating.[0m
+0| 11 is thinking.
+0| 12 is thinking.
+0| 12 has taken a fork
+0| 12 has taken a fork
+0| 12 [32mis eating.[0m
+0| 13 is thinking.
+0| 14 is thinking.
+0| 14 has taken a fork
+0| 14 has taken a fork
+0| 14 [32mis eating.[0m
+0| 15 is thinking.
+0| 16 is thinking.
+0| 16 has taken a fork
+0| 16 has taken a fork
+0| 16 [32mis eating.[0m
+0| 17 is thinking.
+0| 18 is thinking.
+0| 18 has taken a fork
+0| 18 has taken a fork
+0| 18 [32mis eating.[0m
+0| 19 is thinking.
+0| 20 is thinking.
+101| 12 [92mis sleeping.[0m
+101| 8 [92mis sleeping.[0m
+101| 6 [92mis sleeping.[0m
+101| 20 has taken a fork
+101| 19 has taken a fork
+101| 11 has taken a fork
+101| 1 [92mis sleeping.[0m
+101| 13 has taken a fork
+101| 11 has taken a fork
+101| 11 [32mis eating.[0m
+101| 18 [92mis sleeping.[0m
+101| 14 [92mis sleeping.[0m
+101| 2 has taken a fork
+101| 9 has taken a fork
+101| 9 has taken a fork
+101| 16 [92mis sleeping.[0m
+101| 15 has taken a fork
+101| 13 has taken a fork
+101| 15 has taken a fork
+101| 7 has taken a fork
+101| 13 [32mis eating.[0m
+101| 4 [92mis sleeping.[0m
+101| 7 has taken a fork
+101| 17 has taken a fork
+101| 7 [32mis eating.[0m
+101| 2 [32mis eating.[0m
+101| 17 has taken a fork
+101| 17 [32mis eating.[0m
+101| 15 [32mis eating.[0m
+101| 10 [92mis sleeping.[0m
+101| 9 [32mis eating.[0m
+101| 20 has taken a fork
+101| 20 [32mis eating.[0m
+101| 5 has taken a fork
+101| 5 has taken a fork
+101| 5 [32mis eating.[0m
+202| 9 [92mis sleeping.[0m
+202| 11 [92mis sleeping.[0m
+202| 20 [92mis sleeping.[0m
+202| 8 is thinking.
+202| 18 is thinking.
+202| 8 has taken a fork
+202| 19 has taken a fork
+202| 17 [92mis sleeping.[0m
+202| 4 is thinking.
+202| 6 is thinking.
+202| 12 is thinking.
+202| 1 is thinking.
+202| 12 has taken a fork
+202| 19 [32mis eating.[0m
+202| 1 has taken a fork
+202| 16 is thinking.
+202| 1 has taken a fork
+202| 4 has taken a fork
+202| 3 has taken a fork
+202| 4 has taken a fork
+202| 4 [32mis eating.[0m
+202| 8 has taken a fork
+202| 10 is thinking.
+202| 8 [32mis eating.[0m
+202| 10 has taken a fork
+202| 12 has taken a fork
+202| 10 has taken a fork
+202| 2 [92mis sleeping.[0m
+202| 12 [32mis eating.[0m
+202| 10 [32mis eating.[0m
+202| 1 [32mis eating.[0m
+202| 14 is thinking.
+202| 5 [92mis sleeping.[0m
+202| 7 [92mis sleeping.[0m
+202| 6 has taken a fork
+202| 6 has taken a fork
+202| 6 [32mis eating.[0m
+202| 15 [92mis sleeping.[0m
+202| 14 has taken a fork
+202| 13 [92mis sleeping.[0m
+202| 14 has taken a fork
+202| 14 [32mis eating.[0m
+202| 16 has taken a fork
+202| 16 has taken a fork
+202| 16 [32mis eating.[0m
+261| 3 [91mhas died.[0m
+OK!

@@ -27,16 +27,16 @@ typedef struct	s_data
 
 typedef struct	s_philo
 {
-	t_data	*data; // comun a todos los threads---> cambiar a nombre mas intuitivo
+	t_data	*common; // comun a todos los threads---> cambiar a nombre mas intuitivo
 				   // ----------- informacion especifica de cada thread
 //	pthread_t		*philo_thread; why???
 	int				id;
 	int				fork_flags[2]; // para que los muertos suelten los tenedores
 	int				number_of_meals;
-	unsigned int	time_since_last_meal;
+	int				meal_start_switch;
 	pthread_mutex_t			*first_fork;
 	pthread_mutex_t			*second_fork;
-	//pthread_mutex_t			*monitor_lock; // read-write time_since_last_meal (to test)
+	pthread_mutex_t			*monitor_lock; // read-write time_since_last_meal (to test)
 }				t_philo;
 
 
