@@ -8,10 +8,10 @@ static int	print_err(int id)
 		"invalid input for time_to_die.",
 		"invalid input for time_to_eat.",
 		"invalid input for time_to_sleep.",
-		"invalid input for n_of_times_each_philosopher_must_eat."
+		"invalid input for number_of_times_each_philosopher_must_eat."
 	};
 
-	printf("ERROR:\t%s\n", error_msg[id]);
+	printf("\033[91m[ERROR]\033[0m\t%s\n", error_msg[id]);
 	return (0);
 }
 

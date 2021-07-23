@@ -14,10 +14,11 @@ void	print_status(int status_id, long time, int philo_id)
 {
 	static const char	*status_msg[] = {
 		"is thinking.",
-		"has taken a fork",
+		"has taken a fork.",
 		"\033[32mis eating.\033[0m",
 		"\033[92mis sleeping.\033[0m",
-		"\033[91mhas died.\033[0m"
+		"\033[91mhas died.\033[0m",
+		"stood up and left."
 	};
 
 	printf("%ld| %d %s\n", time, philo_id, status_msg[status_id]);
@@ -25,7 +26,7 @@ void	print_status(int status_id, long time, int philo_id)
 
 int	is_there_a_corpse_on_the_table(t_philo *philo_data)
 {
-	if (!philo_data->common->everyone_alive_flag)
+	if (!philo_data->common->alive_flag)
 	{
 		if (philo_data->fork_flags[0])
 			pthread_mutex_unlock(philo_data->first_fork);

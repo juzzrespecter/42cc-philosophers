@@ -16,10 +16,10 @@ void	wait_and_exit_threads(t_philo **philo_arr, t_data *data)
 	while (index < data->n_philo)
 	{
 		pthread_mutex_destroy(&data->fork_arr[index]);
-//		free(philo_arr[index]);
+		free(philo_arr[index]);
 		index++;
 	}
-//	free(philo_arr);
+	free(philo_arr);
 	printf("OK!\n");
 }
 
@@ -32,7 +32,7 @@ static t_philo	*philo_setup(unsigned int index, t_data *data)
 	philo->common = data;
 	philo->id = index + 1;
 	philo->supervisor_lock = malloc(sizeof(pthread_mutex_t));
-	if (!(index % 2))
+	if ((index % 2)) // CHECK THIS
 	{
 //		printf("for %d | first fork: %d\n", index + 1, index);
 		philo->first_fork = &data->fork_arr[index];
@@ -54,7 +54,6 @@ void	init_threads(t_data *data)
 
 	if (!data)
 		return ;
-	print_data(data); // rm
 	philo_arr = malloc(sizeof(t_philo *) * data->n_philo);
 	/* malloc ctrl */
 	index = 0;
