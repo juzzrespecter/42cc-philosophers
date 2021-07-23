@@ -31,7 +31,7 @@ static t_philo	*philo_setup(unsigned int index, t_data *data)
 	memset(philo, 0, sizeof(t_philo));
 	philo->common = data;
 	philo->id = index + 1;
-	philo->monitor_lock = malloc(sizeof(pthread_mutex_t));
+	philo->supervisor_lock = malloc(sizeof(pthread_mutex_t));
 	if (!(index % 2))
 	{
 //		printf("for %d | first fork: %d\n", index + 1, index);
@@ -63,7 +63,7 @@ void	init_threads(t_data *data)
 		philo_arr[index] = philo_setup(index, data);	
 		/* malloc ctrl */
 		pthread_create(&data->pthread_arr[index], NULL, philo_routine, (void *)philo_arr[index]);
-		pthread_create(&data->pthread_arr[index + data->n_philo], NULL, monitor_routine, (void *)philo_arr[index]);	
+		pthread_create(&data->pthread_arr[index + data->n_philo], NULL, supervisor_routine, (void *)philo_arr[index]);	
 		index++;
 	}
 	wait_and_exit_threads(philo_arr, data);

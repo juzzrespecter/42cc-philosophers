@@ -1,5 +1,6 @@
 #ifndef PHILO_H
 # define PHILO_H
+# include <stdbool.h>
 # include <sys/time.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -36,7 +37,7 @@ typedef struct	s_philo
 	int				meal_start_switch;
 	pthread_mutex_t			*first_fork;
 	pthread_mutex_t			*second_fork;
-	pthread_mutex_t			*monitor_lock; // read-write time_since_last_meal (to test)
+	pthread_mutex_t			*supervisor_lock; // read-write time_since_last_meal (to test)
 }				t_philo;
 
 
@@ -46,8 +47,10 @@ int				ft_isdigit(int c);
 long			get_time(void);
 int				philo_err_mgmt(int argc, char **argv);
 void			init_threads(t_data *data);
-void			*monitor_routine(void *routine_args);
 void			*philo_routine(void *routine_args);
+void			*supervisor_routine(void *routine_args);
+int			is_there_a_corpse_on_the_table(t_philo *philo_data);
+void			print_status(int status_id, long time, int philo_id);
 
 // to delete
 

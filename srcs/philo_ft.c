@@ -10,6 +10,33 @@ long	get_time(void)
 	return (time);
 }
 
+void	print_status(int status_id, long time, int philo_id)
+{
+	static const char	*status_msg[] = {
+		"is thinking.",
+		"has taken a fork",
+		"\033[32mis eating.\033[0m",
+		"\033[92mis sleeping.\033[0m",
+		"\033[91mhas died.\033[0m"
+	};
+
+	printf("%ld| %d %s\n", time, philo_id, status_msg[status_id]);
+}
+
+int	is_there_a_corpse_on_the_table(t_philo *philo_data)
+{
+	if (!philo_data->common->everyone_alive_flag)
+	{
+		if (philo_data->fork_flags[0])
+			pthread_mutex_unlock(philo_data->first_fork);
+		if (philo_data->fork_flags[1])
+			pthread_mutex_unlock(philo_data->second_fork);
+		return (1);
+	}
+	return (0);
+}
+
+
 int				ft_isdigit(int c)
 {
 	return ((c >= '0' && c <= '9'));
