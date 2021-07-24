@@ -19,6 +19,8 @@ INC			= $(addprefix $(DIR_INC), philosophers.h)
 GCC			= gcc -Wall -Werror -Wextra
 RM			= rm -rf
 
+OS		:= ${shell uname}
+
 # ---- graphic ----
 LG	= \033[92m
 G	= \033[32m
@@ -29,7 +31,11 @@ ST	= \033[0m
 all:		$(NAME)
 
 $(NAME):	$(OBJS)
+ifeq ($(OS), Linux)
+	@$(GCC) -o $(NAME) $(OBJS) -lpthread
+else
 	@$(GCC) -o $(NAME) $(OBJS)
+endif
 	@echo "$(G)[OK]$(ST)\t$(NAME) created successfully."
 
 $(DIR_OBJS)%.o:	$(DIR_SRCS)%.c $(INC)
@@ -64,10 +70,10 @@ $(NAME_BONUS):	$(OBJS_BONUS)
 	@$(GCC) -o $(NAME_BONUS) $(OBJS_BONUS)
 	@echo "$(G)[OK]$(ST)\t$(NAME_BONUS) created successfully."
 # ----------------
+
 # --- err mgmt ---
 $(INC):
 	@echo "$(R)[KO]$(ST)\tFile $(@F) cannot be found."
 $(DIR_SRCS)%.c:
 	@echo "$(R)[KO]$(ST)\tFile $(@F) cannot be found."
 # ----------------
-

@@ -1,5 +1,5 @@
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILOSOPHERS_H
+# define PHILOSOPHERS_H
 # include <stdbool.h>
 # include <sys/time.h>
 # include <unistd.h>
