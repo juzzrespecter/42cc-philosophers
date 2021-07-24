@@ -25,6 +25,7 @@ static t_data	*init_data(int argc, char **argv)
 		index++;
 	}
 	data->alive_lock = malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(data->alive_lock, 0);
 	data->alive_flag = 1;
 	return (data);
 }
