@@ -54,7 +54,8 @@ normi:
 SRCS_BONUS		= philo_bonus.c \
 				  philo_ft.c \
 				  phio_parser.c \
-				  philo_bonus_start.c
+				  philo_init_threads_bonus.c \
+				  philo_routine_bonus.c
 OBJS_BONUS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
 INC_BONUS		= $(addprefix $(DIR_INC), philosophers_bonus.h)
 

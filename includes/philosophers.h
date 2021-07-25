@@ -14,7 +14,7 @@
 # define DEAD_ID 4
 # define FINISH_ID 5
 
-typedef struct	s_data
+typedef struct s_data
 {
 	pthread_t			*pthread_arr;
 	pthread_mutex_t		*fork_arr;
@@ -25,19 +25,18 @@ typedef struct	s_data
 	unsigned int		time_to_sleep;
 	int					alive_flag;
 	int					times_must_eat;
-}				t_data;
+}	t_data;
 
-typedef struct	s_philo
+typedef struct s_philo
 {
-	t_data				*common; 
+	t_data				*common;
 	int					id;
-	int					fork_flags[2]; // para que suelten los tenedores en caso de fin de simulacion
+	int					fork_flags[2];
 	int					new_meal_flag;
 	int					thread_ended_flag;
-	pthread_mutex_t		*supervisor_lock; // read-write time_since_last_meal (to test)
+	pthread_mutex_t		*supervisor_lock;
 	pthread_mutex_t		*forks[2];
-}				t_philo;
-
+}	t_philo;
 
 unsigned int	ft_atou(char *a);
 int				ft_isdigit(int c);

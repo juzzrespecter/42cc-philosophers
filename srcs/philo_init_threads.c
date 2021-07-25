@@ -1,6 +1,6 @@
 #include "philosophers.h"
 
-static int		clean_data(t_data *data, t_philo **philo_arr)
+static int	clean_data(t_data *data, t_philo **philo_arr)
 {
 	unsigned int	i;
 
@@ -27,7 +27,7 @@ static t_philo	*philo_setup(unsigned int i, t_data *data)
 	philo->common = data;
 	philo->id = i + 1;
 	philo->supervisor_lock = malloc(sizeof(pthread_mutex_t));
-	philo->forks[(i % 2)] = &data->fork_arr[(i + 1) * (i <= data->n_philo)]; 
+	philo->forks[(i % 2)] = &data->fork_arr[(i + 1) * (i <= data->n_philo)];
 	philo->forks[!(i % 2)] = &data->fork_arr[i];
 	return (philo);
 }
@@ -41,12 +41,12 @@ void	init_threads(t_data *data)
 		return ;
 	philo_arr = malloc(sizeof(t_philo *) * data->n_philo);
 	i = 0;
-	while (i < data->n_philo) 
+	while (i < data->n_philo)
 	{
 		philo_arr[i] = philo_setup(i, data);	
 		pthread_create(&data->pthread_arr[i],\
 			   	0, philo_routine, (void *)philo_arr[i]);
-		pthread_create(&data->pthread_arr[i + data->n_philo], \
+		pthread_create(&data->pthread_arr[i + data->n_philo],\
 				0, supervisor_routine, (void *)philo_arr[i]);	
 		pthread_detach(data->pthread_arr[i + data->n_philo]);
 		i++;

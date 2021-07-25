@@ -3,7 +3,7 @@
 long	get_time(void)
 {
 	struct timeval	time_s;
-	long time;
+	long			time;
 
 	gettimeofday(&time_s, NULL);
 	time = time_s.tv_sec * 1000 + (long)time_s.tv_usec / 1000;
@@ -24,7 +24,7 @@ void	print_status(int status_id, long time, int philo_id)
 	printf("%ld| %d %s\n", time, philo_id, status_msg[status_id]);
 }
 
-int				ft_isdigit(int c)
+int		ft_isdigit(int c)
 {
 	return ((c >= '0' && c <= '9'));
 }
@@ -41,7 +41,7 @@ unsigned int	ft_atou(char *a)
 	index += (a[index] == '+');
 	while (a[index] && ft_isdigit(a[index]))
 	{
-		u = u * 10 + (a[index] - '0') ;
+		u = u * 10 + (a[index] - '0');
 		index++;
 	}
 	return (u);
