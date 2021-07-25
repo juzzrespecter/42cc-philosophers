@@ -1,6 +1,5 @@
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
-# include <stdbool.h>
 # include <sys/time.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -14,12 +13,6 @@
 # define SLEEP_ID 3
 # define DEAD_ID 4
 # define FINISH_ID 5
-
-typedef struct	s_fork
-{
-	int				state;
-	pthread_mutex_t	*fork;
-}				t_fork;
 
 typedef struct	s_data
 {
@@ -36,19 +29,13 @@ typedef struct	s_data
 
 typedef struct	s_philo
 {
-	t_data	*common; // comun a todos los threads---> cambiar a nombre mas intuitivo
-				   // ----------- informacion especifica de cada thread
-//	pthread_t		*philo_thread; why???
-	int				id;
-	int				fork_flags[2]; // para que suelten los tenedores en caso de fin de simulacion
-//	int				number_of_meals;
-	int				new_meal_flag;
-	int				thread_ended_flag;
-	pthread_mutex_t			*supervisor_lock; // read-write time_since_last_meal (to test)
-	pthread_mutex_t			*first_fork;
-	pthread_mutex_t			*second_fork;
-	t_fork			*left_fork;
-	t_fork			*right_fork;
+	t_data				*common; 
+	int					id;
+	int					fork_flags[2]; // para que suelten los tenedores en caso de fin de simulacion
+	int					new_meal_flag;
+	int					thread_ended_flag;
+	pthread_mutex_t		*supervisor_lock; // read-write time_since_last_meal (to test)
+	pthread_mutex_t		*forks[2];
 }				t_philo;
 
 
@@ -60,7 +47,6 @@ int				philo_err_mgmt(int argc, char **argv);
 void			init_threads(t_data *data);
 void			*philo_routine(void *routine_args);
 void			*supervisor_routine(void *routine_args);
-int			is_there_a_corpse_on_the_table(t_philo *philo_data);
 void			print_status(int status_id, long time, int philo_id);
 
 #endif

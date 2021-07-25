@@ -18,15 +18,7 @@ INC			= $(addprefix $(DIR_INC), philosophers.h)
 
 GCC			= gcc -Wall -Werror -Wextra
 RM			= rm -rf
-
 OS		:= ${shell uname}
-
-# ---- graphic ----
-LG	= \033[92m
-G	= \033[32m
-R	= \033[91m
-ST	= \033[0m
-#  ----------------
 
 all:		$(NAME)
 
@@ -64,10 +56,16 @@ SRCS_BONUS		= philo_bonus.c \
 				  phio_parser.c \
 				  philo_bonus_start.c
 OBJS_BONUS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
+INC_BONUS		= $(addprefix $(DIR_INC), philosophers_bonus.h)
 
 bonus:			$(NAME_BONUS)
+
 $(NAME_BONUS):	$(OBJS_BONUS)
+ifeq ($(OS), Linux)
+	@$(GCC) -o $(NAME_BONUS) $(OBJS_BONUS) -lpthread
+else
 	@$(GCC) -o $(NAME_BONUS) $(OBJS_BONUS)
+endif
 	@echo "$(G)[OK]$(ST)\t$(NAME_BONUS) created successfully."
 # ----------------
 
@@ -77,3 +75,10 @@ $(INC):
 $(DIR_SRCS)%.c:
 	@echo "$(R)[KO]$(ST)\tFile $(@F) cannot be found."
 # ----------------
+
+# ---- graphic ----
+LG	= \033[92m
+G	= \033[32m
+R	= \033[91m
+ST	= \033[0m
+#  ----------------
