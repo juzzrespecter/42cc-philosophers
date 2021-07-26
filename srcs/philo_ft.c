@@ -13,7 +13,7 @@ long	get_time(void)
 void	print_status(int status_id, long time, int philo_id)
 {
 	static const char	*status_msg[] = {
-		"is thinking.",
+		"\033[33mis thinking.\033[0m",
 		"has taken a fork.",
 		"\033[32mis eating.\033[0m",
 		"\033[92mis sleeping.\033[0m",

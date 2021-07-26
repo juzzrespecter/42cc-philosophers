@@ -8,12 +8,14 @@ static int	clean_data(t_data *data, t_philo **philo_arr)
 	while (i < data->n_philo)
 	{
 		pthread_mutex_destroy(&data->fork_arr[i]);
+		free(philo_arr[i]->supervisor_lock);
 		free(philo_arr[i]);
 		i++;
 	}
 	free(philo_arr);
 	free(data->fork_arr);
 	free(data->pthread_arr);
+	free(data->alive_lock);
 	free(data);
 	return (0);
 }
@@ -27,7 +29,8 @@ static t_philo	*philo_setup(unsigned int i, t_data *data)
 	philo->common = data;
 	philo->id = i + 1;
 	philo->supervisor_lock = malloc(sizeof(pthread_mutex_t));
-	philo->forks[(i % 2)] = &data->fork_arr[(i + 1) * (i <= data->n_philo)];
+	pthread_mutex_init(philo->supervisor_lock, 0);
+	philo->forks[(i % 2)] = &data->fork_arr[(i + 1) * (i + 1 < data->n_philo)];
 	philo->forks[!(i % 2)] = &data->fork_arr[i];
 	return (philo);
 }
