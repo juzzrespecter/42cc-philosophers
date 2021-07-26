@@ -32,5 +32,7 @@ int				ft_isdigit(int c);
 long			get_time(void);
 int				philo_err_mgmt(int argc, char **argv);
 void			init_threads(t_data *data);
+void			philo_process_routine(int id, t_data *data);
+void			print_status(int status_id, long time, int philo_id);
 
 #endif

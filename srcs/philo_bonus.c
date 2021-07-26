@@ -1,6 +1,9 @@
 #include "philosophers_bonus.h"
 
-static t_data	*init_data(int argc, char *argv)
+
+/* crear semaforo con nombre, abrir ese semaforo de forma independiente en cada nuevo proceso */
+
+static t_data	*init_data(int argc, char **argv)
 {
 	t_data			*data;
 	unsigned int	index;
@@ -15,14 +18,12 @@ static t_data	*init_data(int argc, char *argv)
 	if (argc == 6)
 		data->times_must_eat = ft_atou(argv[5]);
 	/*sem shit */
-	data->fork_pile = sem_open("Forks", O_CREAT, 0644, data->n_philo);
+	data->fork_pile = sem_open("/forks", O_CREAT, 0644, data->n_philo); /* creates named semaphore */
 	return (data);
 }
 
 int	main(int argc, char **argv)
 {
-	t_bonus	data;
-
 	if (!philo_err_mgmt(argc, argv))
 		return (EXIT_FAILURE);
 	init_threads(init_data(argc, argv));

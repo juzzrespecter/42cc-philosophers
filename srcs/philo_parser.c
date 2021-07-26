@@ -30,7 +30,7 @@ static int	parse_input(char *input)
 			return (0);
 		index++;
 	}
-	if (ft_atou(input) <= 1)
+	if (ft_atou(input) < 1)
 		return (0);
 	return (1);
 }

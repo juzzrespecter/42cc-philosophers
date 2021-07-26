@@ -43,6 +43,7 @@ clean:
 fclean:		clean
 	@$(RM) $(NAME)
 	@echo "$(R)[RM]$(ST)\t$(NAME) removed."
+	# tunear para borrar philo_bonus (if $(NAME) exists rm)
 
 re:		fclean all
 
@@ -53,7 +54,7 @@ normi:
 # ---- bonus -----
 SRCS_BONUS		= philo_bonus.c \
 				  philo_ft.c \
-				  phio_parser.c \
+				  philo_parser.c \
 				  philo_init_threads_bonus.c \
 				  philo_routine_bonus.c
 OBJS_BONUS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
