@@ -48,11 +48,11 @@ void	init_threads(t_common *common)
 	i = 0;
 	while (i < common->n_philo)
 	{
-		philo_arr[i] = philo_setup(i, common);	
-		pthread_create(&common->pthread_arr[i],\
-			   	0, philo_routine, (void *)philo_arr[i]);
-		pthread_create(&common->pthread_arr[i + common->n_philo],\
-				0, supervisor_routine, (void *)philo_arr[i]);	
+		philo_arr[i] = philo_setup(i, common);
+		pthread_create(&common->pthread_arr[i], \
+				0, philo_routine, (void *)philo_arr[i]);
+		pthread_create(&common->pthread_arr[i + common->n_philo], \
+				0, supervisor_routine, (void *)philo_arr[i]);
 		pthread_detach(common->pthread_arr[i + common->n_philo]);
 		i++;
 	}

@@ -2,7 +2,7 @@
 
 static int	print_err(int id)
 {
-	static const char *error_msg[] = {
+	static const char	*error_msg[] = {
 		"invalid number of options provided to the program.",
 		"invalid input for number_of_philosophers.",
 		"invalid input for time_to_die.",

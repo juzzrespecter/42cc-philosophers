@@ -35,15 +35,12 @@ typedef struct s_common
 
 typedef struct s_philo
 {
-	t_common				*common;
+	t_common			*common;
 	int					id;
-	/*int					fork_flags[2];*/
 	int					new_meal_flag;
-	/*int					thread_ended_flag;*/
 	int					meals_eaten;
 	pthread_mutex_t		*supervisor_lock;
 	int					hands_id[2];
-	/*t_fork		*forks[2]; */
 }	t_philo;
 
 unsigned int	ft_atou(char *a);
@@ -55,6 +52,11 @@ void			init_threads(t_common *common);
 void			*philo_routine(void *routine_args);
 void			*supervisor_routine(void *routine_args);
 void			print_status(int status_id, long time, int philo_id);
-int				thread_checks_if_simulation_ended(t_philo *data);
+int				philo_checks_if_someone_died(t_philo *data);
+
+int				philo_thinks(long time_start, t_philo *data);
+int				philo_eats(long time_start, t_philo *data);
+int				philo_checks_meal(long time_start, t_philo *data);
+int				philo_sleeps(long time_start, t_philo *data);
 
 #endif

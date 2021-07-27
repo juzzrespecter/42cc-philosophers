@@ -26,16 +26,21 @@ void	*supervisor_routine(void *routine_args)
 	t_philo	*data;
 	long	time_start_meal;
 	long	time_start;
+	int		thread_state;
 
 	data = (t_philo *)routine_args;
 	time_start = get_time();
 	time_start_meal = time_start;
 	while (1)
 	{
-		if (thread_checks_if_simulation_ended(data))
+		thread_state = philo_checks_if_someone_died(data);
+		pthread_mutex_lock(data->supervisor_lock);
+		thread_state += (data->meals_eaten == data->common->times_must_eat);
+		pthread_mutex_unlock(data->supervisor_lock);
+		if (thread_state)
 			return (NULL);
 		time_start_meal = supervisor_checks_meal(time_start_meal, data);
 		if (get_time() - time_start_meal > data->common->time_to_die)
-			supervisor_murders_philosopher(time_start, data); // change name
+			supervisor_murders_philosopher(time_start, data);
 	}
 }

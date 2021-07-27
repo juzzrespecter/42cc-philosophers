@@ -12,6 +12,7 @@ SRCS		= philo.c \
 			  philo_parser.c \
 			  philo_init_threads.c \
 			  philo_routine.c \
+			  philo_routine_utils.c \
 			  supervisor_routine.c
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
 INC			= $(addprefix $(DIR_INC), philosophers.h)
@@ -43,6 +44,11 @@ clean:
 fclean:		clean
 	@$(RM) $(NAME)
 	@echo "$(R)[RM]$(ST)\t$(NAME) removed."
+#ifneq (, $(wildcard ./$(NAME_BONUS))
+#	@$(RM) $(NAME_BONUS)
+#	@echo "$(R)[RM]$(ST)\t$(NAME_BONUS) removed."
+#endif
+
 	# tunear para borrar philo_bonus (if $(NAME) exists rm)
 
 re:		fclean all
@@ -55,7 +61,6 @@ normi:
 SRCS_BONUS		= philo_bonus.c \
 				  philo_ft.c \
 				  philo_parser.c \
-				  philo_init_threads_bonus.c \
 				  philo_routine_bonus.c
 OBJS_BONUS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
 INC_BONUS		= $(addprefix $(DIR_INC), philosophers_bonus.h)

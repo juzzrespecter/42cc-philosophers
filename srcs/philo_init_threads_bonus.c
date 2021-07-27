@@ -7,8 +7,8 @@ void	init_threads(t_data *data)
 	pid_t			*pid_arr;
 
 	id = 0;
+	count = 0;
 	pid_arr = malloc(sizeof(pid_t) * data->n_philo);
-	/* repite procesos creados: cambiar */
 	while (id < data->n_philo)
 	{
 		pid_arr[id] = fork();
