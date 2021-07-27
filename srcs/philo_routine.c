@@ -25,21 +25,21 @@ static int	philo_thinks(long time_start, t_philo *data)
 {
 	print_status(THINK_ID, get_time() - time_start, data->id);
 	if (!philo_takes_fork(0, data))
-		return (0);
+		return (1);
 	print_status(FORK_ID, get_time() - time_start, data->id);
 	if (!philo_takes_fork(1, data))
-		return (0);
+		return (1);
 	print_status(FORK_ID, get_time() - time_start, data->id);
-	return (1);
+	return (0);
 }
 
 static int	philo_eats(long time_start, t_philo *data)
 {
-	print_status(EAT_ID, get_time() - time_start, data->id);
 	pthread_mutex_lock(data->supervisor_lock);
 	data->new_meal_flag = 1;
 	data->meals_eaten += (data->common->times_must_eat != -1);
 	pthread_mutex_unlock(data->supervisor_lock);
+	print_status(EAT_ID, get_time() - time_start, data->id);
 	usleep(data->common->time_to_eat * 1000);
 	pthread_mutex_lock(data->common->fork_arr[data->hands_id[0]]->fork_lock);
 	data->common->fork_arr[data->hands_id[0]]->taken = 0;
@@ -72,9 +72,9 @@ void	*philo_routine(void *routine_args)
 	time_start = get_time();
 	while (1)
 	{
-		if (!philo_thinks(time_start, data))
+		if (philo_thinks(time_start, data))
 			break ;
-		if (!philo_eats(time_start, data))
+		if (philo_eats(time_start, data))
 			break ;
 		print_status(SLEEP_ID, get_time() - time_start, data->id);
 		usleep(data->common->time_to_sleep * 1000);

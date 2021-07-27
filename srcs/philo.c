@@ -10,7 +10,7 @@ static t_fork	**fork_arr_setup(int n_philo)
 	while (i < n_philo)
 	{
 		fork_arr[i] = malloc(sizeof(t_fork));
-		fork_arr[i]->fork_lock = malloc(sizeof(pthread_mutex_lock));
+		fork_arr[i]->fork_lock = malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(fork_arr[i]->fork_lock, 0);
 		fork_arr[i]->taken = 0;
 		i++;
@@ -20,10 +20,8 @@ static t_fork	**fork_arr_setup(int n_philo)
 
 static t_common	*init_common(int argc, char **argv)
 {
-	t_common			*common;
-	unsigned int	index;
+	t_common	*common;
 
-	index = 0;
 	common = malloc(sizeof(t_common));
 	common->n_philo = ft_atou(argv[1]);
 	common->time_to_die = ft_atou(argv[2]);
