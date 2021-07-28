@@ -30,7 +30,8 @@ static void	init_threads_parent_waits(pid_t *pid_arr, t_data *data)
 	wait_ret = waitpid(-1, &p_stat, 0);
 	while (wait_ret != -1)
 	{
-		if (WIFEXITSTATUS(p_stat) == -1)
+		printf("process exited with status (%d)\n", WEXITSTATUS(p_stat));
+		if (WEXITSTATUS(p_stat) == 0)
 		{
 			close_threads(pid_arr, data);
 			break ;
@@ -62,9 +63,7 @@ static void	init_threads(t_data *data)
 static t_data	*init_data(int argc, char **argv)
 {
 	t_data			*data;
-	unsigned int	index;
 
-	index = 0;
 	data = malloc(sizeof(t_data));
 	data->n_philo = ft_atou(argv[1]);
 	data->time_to_die = ft_atou(argv[2]);

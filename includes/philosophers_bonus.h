@@ -1,6 +1,8 @@
 #ifndef PHILOSOPHERS_BONUS_H
 # define PHILOSOPHERS_BONUS_H
 # include <sys/time.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <pthread.h>
@@ -16,7 +18,7 @@
 # define DEAD_ID 4
 # define FINISH_ID 5
 
-# define PHILO_DEAD 0
+# define PHILO_DEAD 0 
 
 typedef struct s_data
 {
@@ -30,6 +32,7 @@ typedef struct s_data
 	int				times_must_eat;
 	sem_t			*supervisor_lock;
 	int				meal_flag;
+	int			id;
 }	t_data;
 
 unsigned int	ft_atou(char *a);
@@ -37,7 +40,6 @@ int				ft_isdigit(int c);
 
 long			get_time(void);
 int				philo_err_mgmt(int argc, char **argv);
-void			init_threads(t_data *data);
 void			philo_routine(int id, t_data *data);
 void			print_status(int status_id, long time, int philo_id);
 

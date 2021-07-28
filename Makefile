@@ -8,27 +8,31 @@ DIR_OBJS	= objs/
 DIR_INC		= includes/
 
 SRCS		= philo.c \
-			  philo_ft.c \
-			  philo_parser.c \
-			  philo_init_threads.c \
-			  philo_routine.c \
-			  philo_routine_utils.c \
-			  supervisor_routine.c
+		  philo_ft.c \
+		  philo_parser.c \
+		  philo_init_threads.c \
+		  philo_routine.c \
+		  philo_routine_utils.c \
+		  supervisor_routine.c
+SRCS_BONUS	= philo_bonus.c \
+		  philo_ft.c \
+		  philo_parser.c \
+		  philo_routine_bonus.c
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
-INC			= $(addprefix $(DIR_INC), philosophers.h)
+OBJS_BONUS	= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
+INC		= $(addprefix $(DIR_INC), philosophers.h)
+INC_BONUS	= $(addprefix $(DIR_INC), philosophers_bonus.h)
 
-GCC			= gcc -Wall -Werror -Wextra
-RM			= rm -rf
-OS		:= ${shell uname}
+GCC		= gcc -Wall -Werror -Wextra
+RM		= rm -rf
+ifeq (${shell uname}, Linux)
+	LIB = -lpthread
+endif
 
 all:		$(NAME)
 
 $(NAME):	$(OBJS)
-ifeq ($(OS), Linux)
-	@$(GCC) -o $(NAME) $(OBJS) -lpthread
-else
-	@$(GCC) -o $(NAME) $(OBJS)
-endif
+	@$(GCC) -o $(NAME) $(OBJS) $(LIB)
 	@echo "$(G)[OK]$(ST)\t$(NAME) created successfully."
 
 $(DIR_OBJS)%.o:	$(DIR_SRCS)%.c $(INC)
@@ -44,37 +48,23 @@ clean:
 fclean:		clean
 	@$(RM) $(NAME)
 	@echo "$(R)[RM]$(ST)\t$(NAME) removed."
-#ifneq (, $(wildcard ./$(NAME_BONUS))
-#	@$(RM) $(NAME_BONUS)
-#	@echo "$(R)[RM]$(ST)\t$(NAME_BONUS) removed."
-#endif
-
-	# tunear para borrar philo_bonus (if $(NAME) exists rm)
+ifneq (, $(wildcard ./$(NAME_BONUS)))
+	@$(RM) $(NAME_BONUS)
+	@echo "$(R)[RM]$(ST)\t$(NAME_BONUS) removed."
+endif
 
 re:		fclean all
+
+bonus:		$(NAME_BONUS)
+
+$(NAME_BONUS):	$(OBJS_BONUS)
+	@$(GCC) -o $(NAME_BONUS) $(OBJS_BONUS) $(LIB)
+	@echo "$(G)[OK]$(ST)\t$(NAME_BONUS) created successfully."
 
 normi:
 	@echo "\n$(G)NORMINETTE VERSION:\t\t`norminette -v`$(ST)"
 	@norminette srcs/*.c includes/*.h
 
-# ---- bonus -----
-SRCS_BONUS		= philo_bonus.c \
-				  philo_ft.c \
-				  philo_parser.c \
-				  philo_routine_bonus.c
-OBJS_BONUS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
-INC_BONUS		= $(addprefix $(DIR_INC), philosophers_bonus.h)
-
-bonus:			$(NAME_BONUS)
-
-$(NAME_BONUS):	$(OBJS_BONUS)
-ifeq ($(OS), Linux)
-	@$(GCC) -o $(NAME_BONUS) $(OBJS_BONUS) -lpthread
-else
-	@$(GCC) -o $(NAME_BONUS) $(OBJS_BONUS)
-endif
-	@echo "$(G)[OK]$(ST)\t$(NAME_BONUS) created successfully."
-# ----------------
 
 # --- err mgmt ---
 $(INC):
