@@ -32,6 +32,7 @@ static t_philo	*philo_setup(unsigned int i, t_common *common)
 	philo->id = i + 1;
 	philo->supervisor_lock = malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(philo->supervisor_lock, 0);
+	philo->time_new_meal = common->time_start;
 	philo->hands_id[i % 2] = (i + 1) % common->n_philo;
 	philo->hands_id[!(i % 2)] = i;
 	return (philo);
@@ -46,6 +47,7 @@ void	init_threads(t_common *common)
 		return ;
 	philo_arr = malloc(sizeof(t_philo *) * common->n_philo);
 	i = 0;
+	common->time_start = get_time();
 	while (i < common->n_philo)
 	{
 		philo_arr[i] = philo_setup(i, common);

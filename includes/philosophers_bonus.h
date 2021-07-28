@@ -24,15 +24,18 @@ typedef struct s_data
 {
 	pthread_t		*pthread_arr;
 	sem_t			*fork_pile;
+	sem_t			*supervisor_lock;
+	sem_t			*lock;
+	long			time_start;
+	long			time_last_meal;
 	char			*sem_name;
 	unsigned int	n_philo;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 	int				times_must_eat;
-	sem_t			*supervisor_lock;
-	int				meal_flag;
-	int			id;
+	int				meals_eaten;
+	int				id;
 }	t_data;
 
 unsigned int	ft_atou(char *a);

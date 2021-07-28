@@ -25,6 +25,7 @@ typedef struct s_common
 	pthread_t			*pthread_arr;
 	t_fork				**fork_arr;
 	pthread_mutex_t		*alive_lock;
+	long				time_start;
 	unsigned int		n_philo;
 	unsigned int		time_to_die;
 	unsigned int		time_to_eat;
@@ -37,7 +38,7 @@ typedef struct s_philo
 {
 	t_common			*common;
 	int					id;
-	int					new_meal_flag;
+	long				time_new_meal;
 	int					meals_eaten;
 	pthread_mutex_t		*supervisor_lock;
 	int					hands_id[2];
@@ -54,9 +55,9 @@ void			*supervisor_routine(void *routine_args);
 void			print_status(int status_id, long time, int philo_id);
 int				philo_checks_if_someone_died(t_philo *data);
 
-int				philo_thinks(long time_start, t_philo *data);
-int				philo_eats(long time_start, t_philo *data);
-int				philo_checks_meal(long time_start, t_philo *data);
-int				philo_sleeps(long time_start, t_philo *data);
+int				philo_thinks(t_philo *data);
+int				philo_eats(t_philo *data);
+int				philo_checks_meal(t_philo *data);
+int				philo_sleeps(t_philo *data);
 
 #endif

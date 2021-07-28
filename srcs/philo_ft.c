@@ -18,7 +18,7 @@ void	print_status(int status_id, long time, int philo_id)
 		"\033[32mis eating.\033[0m",
 		"\033[92mis sleeping.\033[0m",
 		"\033[91mhas died.\033[0m",
-		"stood up and left."
+		"\033[96mstood up and left.\033[0m"
 	};
 
 	printf("%ld| %d %s\n", time, philo_id, status_msg[status_id]);

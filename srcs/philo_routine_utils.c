@@ -1,6 +1,6 @@
 #include "philosophers.h"
 
-static int	philo_takes_fork(long time_start, int hand_id, t_philo *data)
+static int	philo_takes_fork(int hand_id, t_philo *data)
 {
 	int	fork_state;
 
@@ -15,28 +15,29 @@ static int	philo_takes_fork(long time_start, int hand_id, t_philo *data)
 		pthread_mutex_unlock(data->common->fork_arr[hand_id]->fork_lock);
 		if (!fork_state)
 			break ;
+		usleep(1 * 1000);
 	}
-	print_status(FORK_ID, get_time() - time_start, data->id);
+	print_status(FORK_ID, get_time() - data->common->time_start, data->id);
 	return (0);
 }
 
-int	philo_thinks(long time_start, t_philo *data)
+int	philo_thinks( t_philo *data)
 {
 	if (philo_checks_if_someone_died(data))
 		return (1);
-	print_status(THINK_ID, get_time() - time_start, data->id);
-	if (philo_takes_fork(time_start, data->hands_id[0], data))
+	print_status(THINK_ID, get_time() - data->common->time_start, data->id);
+	if (philo_takes_fork(data->hands_id[0], data))
 		return (1);
-	return (philo_takes_fork(time_start, data->hands_id[1], data));
+	return (philo_takes_fork(data->hands_id[1], data));
 }
 
-int	philo_eats(long time_start, t_philo *data)
+int	philo_eats(t_philo *data)
 {
 	if (philo_checks_if_someone_died(data))
 		return (1);
-	print_status(EAT_ID, get_time() - time_start, data->id);
+	print_status(EAT_ID, get_time() - data->common->time_start, data->id);
 	pthread_mutex_lock(data->supervisor_lock);
-	data->new_meal_flag = 1;
+	data->time_new_meal = get_time();
 	data->meals_eaten += (data->common->times_must_eat != -1);
 	pthread_mutex_unlock(data->supervisor_lock);
 	usleep(data->common->time_to_eat * 1000);
@@ -49,23 +50,23 @@ int	philo_eats(long time_start, t_philo *data)
 	return (0);
 }
 
-int	philo_checks_meal(long time_start, t_philo *data)
+int	philo_checks_meal(t_philo *data)
 {
 	if (data->meals_eaten == data->common->times_must_eat)
 	{
 		if (philo_checks_if_someone_died(data))
 			return (1);
-		print_status(FINISH_ID, get_time() - time_start, data->id);
+		print_status(FINISH_ID, get_time() - data->common->time_start, data->id);
 		return (1);
 	}
 	return (0);
 }
 
-int	philo_sleeps(long time_start, t_philo *data)
+int	philo_sleeps(t_philo *data)
 {
 	if (philo_checks_if_someone_died(data))
 		return (1);
-	print_status(SLEEP_ID, get_time() - time_start, data->id);
+	print_status(SLEEP_ID, get_time() - data->common->time_start, data->id);
 	usleep(data->common->time_to_sleep * 1000);
 	return (0);
 }

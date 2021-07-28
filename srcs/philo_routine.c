@@ -12,7 +12,7 @@ int	philo_checks_if_someone_died(t_philo *data)
 
 void	*philo_routine(void *routine_args)
 {
-	static	int	(*philo_action[])(long, t_philo *) = {
+	static	int	(*philo_action[])(t_philo *) = {
 		philo_thinks,
 		philo_eats,
 		philo_checks_meal,
@@ -20,17 +20,15 @@ void	*philo_routine(void *routine_args)
 	};
 	int			status_id;
 	int			status_ret;
-	long		time_start;
 	t_philo		*data;
 
 	data = (t_philo *)routine_args;
 	status_id = 0;
-	time_start = get_time();
 	while (1)
 	{
 		if (status_id > 3)
 			status_id = 0;
-		status_ret = philo_action[status_id](time_start, data);
+		status_ret = philo_action[status_id](data);
 		if (status_ret == 1)
 			break ;
 		status_id++;

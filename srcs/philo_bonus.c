@@ -30,7 +30,6 @@ static void	init_threads_parent_waits(pid_t *pid_arr, t_data *data)
 	wait_ret = waitpid(-1, &p_stat, 0);
 	while (wait_ret != -1)
 	{
-		printf("process exited with status (%d)\n", WEXITSTATUS(p_stat));
 		if (WEXITSTATUS(p_stat) == 0)
 		{
 			close_threads(pid_arr, data);
@@ -49,6 +48,8 @@ static void	init_threads(t_data *data)
 
 	id = 0;
 	pid_arr = malloc(sizeof(pid_t) * data->n_philo);
+	data->time_start = get_time();
+	data->time_last_meal = data->time_start;
 	while (id < data->n_philo)
 	{
 		pid_arr[id] = fork();
@@ -57,6 +58,7 @@ static void	init_threads(t_data *data)
 		id++;
 	}
 	sem_unlink(data->sem_name);
+	sem_unlink("status");
 	init_threads_parent_waits(pid_arr, data);
 }
 
@@ -70,11 +72,12 @@ static t_data	*init_data(int argc, char **argv)
 	data->time_to_eat = ft_atou(argv[3]);
 	data->time_to_sleep = ft_atou(argv[4]);
 	data->times_must_eat = -1;
-	data->meal_flag = 0;
-	data->sem_name = "/fork_pile";
 	if (argc == 6)
 		data->times_must_eat = ft_atou(argv[5]);
-	data->fork_pile = sem_open(data->sem_name, O_CREAT, 0644, data->n_philo);
+	data->meals_eaten = -2 * (data->times_must_eat == -1);
+	data->sem_name = "/fork_pile";
+	data->fork_pile = sem_open(data->sem_name, O_CREAT, 0600, data->n_philo);
+	data->lock = sem_open("status", O_CREAT, 0600, 1);
 	return (data);
 }
 
