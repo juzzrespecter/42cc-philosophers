@@ -12,34 +12,29 @@
 # define EAT_ID 2
 # define SLEEP_ID 3
 # define DEAD_ID 4
-# define FINISH_ID 5
-
-typedef struct s_fork
-{
-	pthread_mutex_t	*fork_lock;
-	int				taken;
-}	t_fork;
 
 typedef struct s_common
 {
-	pthread_t			*pthread_arr;
-	t_fork				**fork_arr;
-	pthread_mutex_t		*alive_lock;
 	long				time_start;
-	unsigned int		n_philo;
+	pthread_t			*threads;
+	pthread_mutex_t		*thread_lock;
+	pthread_mutex_t		**forks;
+	int					*forks_state;
+	int					n_philo;
 	unsigned int		time_to_die;
 	unsigned int		time_to_eat;
 	unsigned int		time_to_sleep;
-	int					alive_flag;
 	int					times_must_eat;
+	int					finished_meals_counter;
+	int					end_simulation_flag;
 }	t_common;
 
 typedef struct s_philo
 {
 	t_common			*common;
 	int					id;
-	long				time_new_meal;
-	int					meals_eaten;
+	long				time_since_new_meal;
+	int					finished_meals;
 	pthread_mutex_t		*supervisor_lock;
 	int					hands_id[2];
 }	t_philo;
@@ -53,7 +48,7 @@ void			init_threads(t_common *common);
 void			*philo_routine(void *routine_args);
 void			*supervisor_routine(void *routine_args);
 void			print_status(int status_id, long time, int philo_id);
-int				philo_checks_if_someone_died(t_philo *data);
+int				thread_checks_if_simulation_ended(t_common *common);
 
 int				philo_thinks(t_philo *data);
 int				philo_eats(t_philo *data);

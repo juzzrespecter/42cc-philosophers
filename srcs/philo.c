@@ -1,21 +1,19 @@
 #include "philosophers.h"
 
-static t_fork	**fork_arr_setup(int n_philo)
+static pthread_mutex_t	**forks_setup(int n_philo)
 {
-	t_fork	**fork_arr;
-	int		i;
+	pthread_mutex_t	**forks;
+	int				i;
 
-	fork_arr = malloc(sizeof(t_fork *) * n_philo);
+	forks = malloc(sizeof(pthread_mutex_t *) * n_philo);
 	i = 0;
 	while (i < n_philo)
 	{
-		fork_arr[i] = malloc(sizeof(t_fork));
-		fork_arr[i]->fork_lock = malloc(sizeof(pthread_mutex_t));
-		pthread_mutex_init(fork_arr[i]->fork_lock, 0);
-		fork_arr[i]->taken = 0;
+		forks[i] = malloc(sizeof(pthread_mutex_t));
+		pthread_mutex_init(forks[i], 0);
 		i++;
 	}
-	return (fork_arr);
+	return (forks);
 }
 
 static t_common	*init_common(int argc, char **argv)
@@ -30,13 +28,16 @@ static t_common	*init_common(int argc, char **argv)
 	common->times_must_eat = -1;
 	if (argc == 6)
 		common->times_must_eat = ft_atou(argv[5]);
-	common->alive_lock = malloc(sizeof(pthread_mutex_t));
-	pthread_mutex_init(common->alive_lock, 0);
-	common->pthread_arr = malloc(sizeof(pthread_t) * common->n_philo * 2);
-	common->fork_arr = fork_arr_setup(common->n_philo);
-	if (!common->alive_lock || !common->pthread_arr || !common->fork_arr)
+	common->thread_lock = malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(common->thread_lock, 0);
+	common->threads = malloc(sizeof(pthread_t) * common->n_philo);
+	common->forks = forks_setup(common->n_philo);
+	common->forks_state = malloc(sizeof(int) * common->n_philo);
+	if (!common->thread_lock || !common->threads || !common->forks)
 		return (0);
-	common->alive_flag = 1;
+	memset(common->forks_state, 0, sizeof(int) * common->n_philo);
+	common->end_simulation_flag = 0;
+	common->finished_meals_counter = 0;
 	return (common);
 }
 

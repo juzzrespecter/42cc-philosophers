@@ -17,11 +17,10 @@ void	print_status(int status_id, long time, int philo_id)
 		"has taken a fork.",
 		"\033[32mis eating.\033[0m",
 		"\033[92mis sleeping.\033[0m",
-		"\033[91mhas died.\033[0m",
-		"\033[96mstood up and left.\033[0m"
+		"\033[91mhas died.\033[0m"
 	};
 
-	printf("%ld| %d %s\n", time, philo_id, status_msg[status_id]);
+	printf("%ld| %d %s\n", time, philo_id + 1, status_msg[status_id]);
 }
 
 int	ft_isdigit(int c)
