@@ -99,6 +99,8 @@ void	init_threads(t_common *common)
 	while (i < common->n_philo)
 	{
 		pthread_create(&common->threads[i], 0, philo_routine, (void *)ph_a[i]);
+		pthread_create(&common->threads[i + common->n_philo], 0, supervisor_routine, (void *)ph_a[i]);
+		pthread_detach(common->threads[i + common->n_philo]);
 		i++;
 	}
 	if (common->times_must_eat != -1)

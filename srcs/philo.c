@@ -30,7 +30,7 @@ static t_common	*init_common(int argc, char **argv)
 		common->times_must_eat = ft_atou(argv[5]);
 	common->thread_lock = malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(common->thread_lock, 0);
-	common->threads = malloc(sizeof(pthread_t) * common->n_philo);
+	common->threads = malloc(sizeof(pthread_t) * common->n_philo * 2);
 	common->forks = forks_setup(common->n_philo);
 	common->forks_state = malloc(sizeof(int) * common->n_philo);
 	if (!common->thread_lock || !common->threads || !common->forks)

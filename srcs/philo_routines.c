@@ -34,13 +34,10 @@ void	*philo_routine(void *routine_args)
 		philo_eats,
 		philo_sleeps
 	};
-	pthread_t	sv_thread;
 	int			status_id;
 	int			status_ret;
 	t_philo		*data;
 
-	pthread_create(&sv_thread, 0, supervisor_routine, routine_args);
-	pthread_detach(sv_thread);
 	data = (t_philo *)routine_args;
 	status_id = 0;
 	status_ret = 0;
