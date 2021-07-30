@@ -3,26 +3,25 @@
 void	*supervisor_routine(void *routine_args)
 {
 	t_philo		*data;
-	t_common	*common;
+	int			thread_state;
 	long		locked_time;
 
+	thread_state = 0;
 	data = (t_philo *)routine_args;
-	common = data->common;
-	while (1)
+	while (!thread_state)
 	{
-		if (thread_checks_if_simulation_ended(data->common))
-			break ;
 		pthread_mutex_lock(data->supervisor_lock);
 		locked_time = data->time_since_new_meal;
 		pthread_mutex_unlock(data->supervisor_lock);
-		if (get_time() - locked_time > common->time_to_die)
+		pthread_mutex_lock(data->common->thread_lock);
+		if (get_time() - locked_time > data->common->time_to_die)
 		{
-			pthread_mutex_lock(common->thread_lock);
 			if (data->common->end_simulation_flag == 0)
-				print_status(DEAD_ID, get_time() - common->time_start, data->id);
+				print_status(DEAD_ID, get_time() - data->common->time_start, data->id);
 			data->common->end_simulation_flag = 1;
-			pthread_mutex_unlock(common->thread_lock);
 		}
+		thread_state = data->common->end_simulation_flag;
+		pthread_mutex_unlock(data->common->thread_lock);
 	}
 	return (NULL);
 }

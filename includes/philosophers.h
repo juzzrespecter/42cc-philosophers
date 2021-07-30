@@ -48,7 +48,8 @@ void			init_threads(t_common *common);
 void			*philo_routine(void *routine_args);
 void			*supervisor_routine(void *routine_args);
 void			print_status(int status_id, long time, int philo_id);
-int				thread_checks_if_simulation_ended(t_common *common);
+//int				thread_checks_if_simulation_ended(t_common *common);
+int				print_status_mutex(int status_id, t_philo *data);
 
 int				philo_thinks(t_philo *data);
 int				philo_eats(t_philo *data);

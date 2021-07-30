@@ -16,7 +16,6 @@
 # define EAT_ID 2
 # define SLEEP_ID 3
 # define DEAD_ID 4
-# define FINISH_ID 5
 
 # define PHILO_DEAD 0 
 
@@ -28,13 +27,13 @@ typedef struct s_data
 	sem_t			*lock;
 	long			time_start;
 	long			time_last_meal;
-	char			*sem_name;
-	unsigned int	n_philo;
+	int				*finished_meals_counter;
+	int				n_philo;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 	int				times_must_eat;
-	int				meals_eaten;
+	int				finished_meals;
 	int				id;
 }	t_data;
 
@@ -43,7 +42,7 @@ int				ft_isdigit(int c);
 
 long			get_time(void);
 int				philo_err_mgmt(int argc, char **argv);
-void			philo_routine(int id, t_data *data);
+int				philo_routine(int id, t_data *data);
 void			print_status(int status_id, long time, int philo_id);
 
 #endif

@@ -1,41 +1,17 @@
 #include "philosophers_bonus.h"
 
-/* waitpid(-1, NULL, 0) == wait();
- *
- * if exit status of waitpid != id of process, matalo todo
- */
-/*
- * force end of all processes
- * (a philo dies; end of sim.)
- *
- */ 
-
-static void	close_threads(pid_t *pid_arr, t_data *data)
-{
-	unsigned int	count;
-
-	count = 0;
-	while (count < data->n_philo)
-	{
-		kill(pid_arr[count], SIGKILL); // pasa por pid de filosofo muerto!!
-		count++;
-	}
-}
-
 static void	init_threads_parent_waits(pid_t *pid_arr, t_data *data)
 {
 	pid_t	wait_ret;
 	int		p_stat;
+	int		i;
 
+	i = 0;
 	wait_ret = waitpid(-1, &p_stat, 0);
-	while (wait_ret != -1)
+	while (i < data->n_philo)
 	{
-		if (WEXITSTATUS(p_stat) == 0)
-		{
-			close_threads(pid_arr, data);
-			break ;
-		}
-		wait_ret = waitpid(-1, &p_stat, 0);
+		kill(pid_arr[i], SIGSTOP);
+		i++;
 	}
 	free(pid_arr);
 	free(data);
@@ -43,9 +19,11 @@ static void	init_threads_parent_waits(pid_t *pid_arr, t_data *data)
 
 static void	init_threads(t_data *data)
 {
-	unsigned int	id;
-	pid_t			*pid_arr;
+	int		id;
+	pid_t	*pid_arr;
 
+	if (!data)
+		return ; 
 	id = 0;
 	pid_arr = malloc(sizeof(pid_t) * data->n_philo);
 	data->time_start = get_time();
@@ -54,11 +32,11 @@ static void	init_threads(t_data *data)
 	{
 		pid_arr[id] = fork();
 		if (!pid_arr[id])
-			philo_routine(id + 1, data);
+			philo_routine(id, data);
 		id++;
 	}
-	sem_unlink(data->sem_name);
-	sem_unlink("status");
+	sem_unlink("/fork_pile");
+	sem_unlink("/status");
 	init_threads_parent_waits(pid_arr, data);
 }
 
@@ -74,10 +52,11 @@ static t_data	*init_data(int argc, char **argv)
 	data->times_must_eat = -1;
 	if (argc == 6)
 		data->times_must_eat = ft_atou(argv[5]);
-	data->meals_eaten = -2 * (data->times_must_eat == -1);
-	data->sem_name = "/fork_pile";
-	data->fork_pile = sem_open(data->sem_name, O_CREAT, 0600, data->n_philo);
-	data->lock = sem_open("status", O_CREAT, 0600, 1);
+	data->finished_meals = 0;
+	data->finished_meals_counter = malloc(sizeof(int));
+	*(data->finished_meals_counter) = 0;
+	data->fork_pile = sem_open("/fork_pile", O_CREAT, 0600, data->n_philo);
+	data->lock = sem_open("/status", O_CREAT, 0600, 1);
 	return (data);
 }
 

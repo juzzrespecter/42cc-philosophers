@@ -26,9 +26,9 @@ static int	clean_common(t_common *common, t_philo **philos)
 
 static t_philo	**philo_setup(t_common *common)
 {
-	t_philo			**philosophers;
-	t_philo			*philo;
-	int	index;
+	t_philo	**philosophers;
+	t_philo	*philo;
+	int		index;
 
 	index = 0;
 	philosophers = malloc(sizeof(t_philo *) * common->n_philo);
@@ -53,23 +53,22 @@ static t_philo	**philo_setup(t_common *common)
 static void	*metre_routine(void *metre_args)
 {
 	t_common	*common;
+	int			thread_state;
 
 	common = (t_common *)metre_args;
-	while (1)
+	thread_state = 0;
+	while (!thread_state)
 	{
 		pthread_mutex_lock(common->thread_lock);
-		if (common->end_simulation_flag == 1)
-			break ;
-		if (common->finished_meals_counter == (int)common->n_philo)
+		if (common->finished_meals_counter == common->n_philo)
 		{
 			common->end_simulation_flag = 1;
 			printf("%ld| \033[96mall philosophers finished their meals.\033[0m\n",\
 				   	get_time() - common->time_start);
-			break ;
 		}
+		thread_state = common->end_simulation_flag;
 		pthread_mutex_unlock(common->thread_lock);
 	}
-	pthread_mutex_unlock(common->thread_lock);
 	return (NULL);
 }
 

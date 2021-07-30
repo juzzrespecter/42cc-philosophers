@@ -17,7 +17,6 @@ void	*supervisor_routine(void *routine_args)
 			print_status(DEAD_ID, get_time() - data->time_start, data->id);
 			exit(PHILO_DEAD);
 		}
-		usleep(1 * 1000);
 	}
 }
 
@@ -37,37 +36,48 @@ void	philo_thinks(t_data *data)
 	print_lock(FORK_ID, get_time() - data->time_start, data->id, data->lock);
 }
 
-int	philo_eats(t_data *data)
+void	philo_eats(t_data *data)
 {
 	print_lock(EAT_ID, get_time() - data->time_start, data->id, data->lock);
 	sem_wait(data->supervisor_lock);
 	data->time_last_meal = get_time();
-	data->meals_eaten += (data->times_must_eat != -1);
+	data->finished_meals += (data->times_must_eat != -1);
 	sem_post(data->supervisor_lock);
 	usleep(data->time_to_eat * 1000);
 	sem_post(data->fork_pile);
 	sem_post(data->fork_pile);
-	return (data->meals_eaten == data->times_must_eat);
+	if (data->finished_meals == data->times_must_eat)
+	{
+		sem_wait(data->lock);
+		*data->finished_meals_counter += 1;
+		sem_post(data->lock);
+	}
+	printf("eooo %d\n", *data->finished_meals_counter);
+	sem_wait(data->lock);
+	if (*data->finished_meals_counter == data->times_must_eat)
+	{
+		printf("chao\n");
+		exit(0);
+	}
+	sem_post(data->lock);
 }
 
-void	philo_routine(int id, t_data *data)
+int	philo_routine(int id, t_data *data)
 {
 	pthread_t	sv_thread;
 
-	data->supervisor_lock = sem_open("lock", O_CREAT, 0600, 1);
-	sem_unlink("lock");
+	data->supervisor_lock = sem_open("/lock", O_CREAT, 0600, 1);
+	sem_unlink("/lock");
 	data->id = id;
 	pthread_create(&sv_thread, NULL, supervisor_routine, (void *)data);
 	pthread_detach(sv_thread);
-	while (data->meals_eaten < data->times_must_eat)
+	while (1)
 	{
 		philo_thinks(data);
-		if (philo_eats(data))
-			break ;
+		philo_eats(data);
 		print_lock(SLEEP_ID, get_time() - data->time_start, data->id, data->lock);
 		usleep(data->time_to_sleep * 1000);
 	}
-	print_lock(FINISH_ID, get_time() - data->time_start, data->id, data->lock);
 	sem_close(data->fork_pile);
-	exit(id);
+	return (EXIT_SUCCESS);
 }
