@@ -1,6 +1,19 @@
 #include "philosophers_bonus.h"
 
-void	*supervisor_routine(void *routine_args)
+void		kill_threads(pid_t *pid_arr, int n_philo, int current_pid)
+{
+	int	i;
+
+	i = 0;
+	while (i < n_philo)
+	{
+		if (i != current_pid)
+			kill(pid_arr[i], SIGKILL);
+		i++;
+	}
+}
+
+static void	*supervisor_routine(void *routine_args)
 {
 	t_data *data;
 	long	time_start_meal;
@@ -13,60 +26,54 @@ void	*supervisor_routine(void *routine_args)
 		sem_post(data->supervisor_lock);
 		if (time_start_meal > data->time_to_die)
 		{
-			sem_wait(data->lock);
+			sem_wait(data->process_lock);
 			print_status(DEAD_ID, get_time() - data->time_start, data->id);
-			exit(PHILO_DEAD);
+		//	kill_threads(data->pid_arr, data->n_philo, data->id);
+			exit(data->id);
 		}
 	}
 }
 
-void	print_lock(int status_id, long timestamp, int pid, sem_t *lock)
+static void	print_lock(int status_id, t_data *data)
 {
-	sem_wait(lock);
-	print_status(status_id, timestamp, pid);
-	sem_post(lock);
+	sem_wait(data->process_lock);
+	print_status(status_id, get_time() - data->time_start, data->id);
+	sem_post(data->process_lock);
 }
 
-void	philo_thinks(t_data *data)
+static void	philo_routine_sv_init(int id, t_data *data)
 {
-	print_lock(THINK_ID, get_time() - data->time_start, data->id, data->lock);
-	sem_wait(data->fork_pile);
-	print_lock(FORK_ID, get_time() - data->time_start, data->id, data->lock);
-	sem_wait(data->fork_pile);
-	print_lock(FORK_ID, get_time() - data->time_start, data->id, data->lock);
-}
-
-void	philo_eats(t_data *data)
-{
-	print_lock(EAT_ID, get_time() - data->time_start, data->id, data->lock);
-	sem_wait(data->supervisor_lock);
-	data->time_last_meal = get_time();
-	data->finished_meals += (data->times_must_eat != -1);
-	sem_post(data->supervisor_lock);
-	usleep(data->time_to_eat * 1000);
-	sem_post(data->fork_pile);
-	sem_post(data->fork_pile);
-	if (data->finished_meals == data->times_must_eat)
-		sem_post(data->still_eating);
-}
-
-int	philo_routine(int id, t_data *data)
-{
-	pthread_t	sv_thread;
-
-	sem_wait(data->still_eating);
 	data->supervisor_lock = sem_open("/lock", O_CREAT, 0600, 1);
 	sem_unlink("/lock");
 	data->id = id;
-	pthread_create(&sv_thread, NULL, supervisor_routine, (void *)data);
-	pthread_detach(sv_thread);
+	pthread_create(&data->sv_thread, NULL, supervisor_routine, (void *)data);
+	pthread_detach(data->sv_thread);
+}	
+
+void	philo_routine(int id, t_data *data)
+{
+	sem_wait(data->still_eating);
+	philo_routine_sv_init(id, data);
 	while (1)
 	{
-		philo_thinks(data);
-		philo_eats(data);
-		print_lock(SLEEP_ID, get_time() - data->time_start, data->id, data->lock);
+		print_lock(THINK_ID, data);
+		sem_wait(data->fork_pile);
+		print_lock(FORK_ID, data);
+		sem_wait(data->fork_pile);
+		print_lock(FORK_ID, data);
+		print_lock(EAT_ID, data);
+		sem_wait(data->supervisor_lock);
+		data->time_last_meal = get_time();
+		data->finished_meals += (data->times_must_eat != -1);
+		sem_post(data->supervisor_lock);
+		usleep(data->time_to_eat * 1000);
+		sem_post(data->fork_pile);
+		sem_post(data->fork_pile);
+		if (data->finished_meals == data->times_must_eat)
+			sem_post(data->still_eating);
+		print_lock(SLEEP_ID, data);
 		usleep(data->time_to_sleep * 1000);
 	}
 	sem_close(data->fork_pile);
-	return (EXIT_SUCCESS);
+	exit(data->id);
 }
