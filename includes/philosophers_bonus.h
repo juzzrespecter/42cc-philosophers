@@ -27,7 +27,7 @@ typedef struct s_data
 	sem_t			*lock;
 	long			time_start;
 	long			time_last_meal;
-	int				*finished_meals_counter;
+	sem_t			*still_eating;
 	int				n_philo;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;

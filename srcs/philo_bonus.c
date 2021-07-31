@@ -1,13 +1,32 @@
 #include "philosophers_bonus.h"
 
+static void	*metre_routine(void *metre_args)
+{
+	t_data	*data;
+
+	data = (t_data *)metre_args;
+	usleep(1);
+	sem_wait(data->still_eating);
+	// kill shit
+	sem_wait(data->lock);
+	printf("Placeholder: todos los filosofos han comido sus raciones\n");
+	sem_post(data->lock);
+	return (NULL);
+}
+
 static void	init_threads_parent_waits(pid_t *pid_arr, t_data *data)
 {
-	pid_t	wait_ret;
+	pthread_t	metre;
 	int		p_stat;
 	int		i;
 
 	i = 0;
-	wait_ret = waitpid(-1, &p_stat, 0);
+	if (data->times_must_eat != -1)
+	{
+		pthread_create(&metre, 0, metre_routine, (void *)data);
+		pthread_detach(metre);
+	}
+	waitpid(-1, &p_stat, 0);
 	while (i < data->n_philo)
 	{
 		kill(pid_arr[i], SIGSTOP);
@@ -35,6 +54,7 @@ static void	init_threads(t_data *data)
 			philo_routine(id, data);
 		id++;
 	}
+	sem_unlink("/still_eating");
 	sem_unlink("/fork_pile");
 	sem_unlink("/status");
 	init_threads_parent_waits(pid_arr, data);
@@ -53,9 +73,8 @@ static t_data	*init_data(int argc, char **argv)
 	if (argc == 6)
 		data->times_must_eat = ft_atou(argv[5]);
 	data->finished_meals = 0;
-	data->finished_meals_counter = malloc(sizeof(int));
-	*(data->finished_meals_counter) = 0;
 	data->fork_pile = sem_open("/fork_pile", O_CREAT, 0600, data->n_philo);
+	data->still_eating = sem_open("/still_eating", O_CREAT, 0600, data->n_philo);
 	data->lock = sem_open("/status", O_CREAT, 0600, 1);
 	return (data);
 }

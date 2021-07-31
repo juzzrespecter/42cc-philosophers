@@ -47,25 +47,14 @@ void	philo_eats(t_data *data)
 	sem_post(data->fork_pile);
 	sem_post(data->fork_pile);
 	if (data->finished_meals == data->times_must_eat)
-	{
-		sem_wait(data->lock);
-		*data->finished_meals_counter += 1;
-		sem_post(data->lock);
-	}
-	printf("eooo %d\n", *data->finished_meals_counter);
-	sem_wait(data->lock);
-	if (*data->finished_meals_counter == data->times_must_eat)
-	{
-		printf("chao\n");
-		exit(0);
-	}
-	sem_post(data->lock);
+		sem_post(data->still_eating);
 }
 
 int	philo_routine(int id, t_data *data)
 {
 	pthread_t	sv_thread;
 
+	sem_wait(data->still_eating);
 	data->supervisor_lock = sem_open("/lock", O_CREAT, 0600, 1);
 	sem_unlink("/lock");
 	data->id = id;
