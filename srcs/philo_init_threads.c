@@ -1,112 +1,123 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_init_threads.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/02 20:32:16 by danrodri          #+#    #+#             */
+/*   Updated: 2021/08/02 21:16:19 by danrodri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
-static int	clean_common(t_common *common, t_philo **philos)
+void	clean_data(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	while (i < common->n_philo)
+	while (i < data->n_of_philos)
 	{
-		pthread_mutex_destroy(common->forks[i]);
-		pthread_mutex_destroy(philos[i]->supervisor_lock);
-		free(common->forks[i]);
-		free(philos[i]->supervisor_lock);
-		free(philos[i]);
+		pthread_mutex_destroy(data->forks[i]);
+		free(data->philo_array[i]);
+		free(data->forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(common->thread_lock);
-	free(philos);
-	free(common->forks);
-	free(common->forks_state);
-	free(common->threads);
-	free(common->thread_lock);
-	free(common);
-	return (0);
+	free(data->philo_array);
+	free(data->forks);
+	free(data->threads);
+	free(data->forks_state);
+	free(data);
 }
 
-static t_philo	**philo_setup(t_common *common)
+void	*metre(void *routine_args)
 {
-	t_philo	**philosophers;
-	t_philo	*philo;
-	int		index;
-
-	index = 0;
-	philosophers = malloc(sizeof(t_philo *) * common->n_philo);
-	while (index < common->n_philo)
-	{
-		philo = malloc(sizeof(t_philo));
-		memset(philo, 0, sizeof(t_philo));
-		philo->common = common;
-		philo->id = index;
-		philo->supervisor_lock = malloc(sizeof(pthread_mutex_t));
-		pthread_mutex_init(philo->supervisor_lock, 0);
-		philo->time_since_new_meal = common->time_start;
-		philo->hands_id[(index % 2)] = (index + 1) % common->n_philo;
-		philo->hands_id[!(index % 2)] = index;
-		philo->time_since_new_meal = common->time_start;
-		philosophers[index] = philo;
-		index++;
-	}
-	return (philosophers);
-}
-
-static void	*metre_routine(void *metre_args)
-{
-	t_common	*common;
+	t_data		*data;
+	const char	*finish_msg;
 	int			thread_state;
 
-	common = (t_common *)metre_args;
+	finish_msg = "\033[96mall philosophers finished eating.\033[0m";
+	data = (t_data *)routine_args;
 	thread_state = 0;
 	while (!thread_state)
 	{
-		pthread_mutex_lock(common->thread_lock);
-		if (common->finished_meals_counter == common->n_philo)
+		pthread_mutex_lock(data->lock);
+		thread_state = data->end_simulation_flag;
+		if (!thread_state && data->finished_count == data->n_of_philos)
 		{
-			common->end_simulation_flag = 1;
-			printf("%ld| \033[96mall philosophers finished their meals.\033[0m\n",\
-				   	get_time() - common->time_start);
+			data->end_simulation_flag = 1;
+			printf("%ld| %s\n", get_time() - data->time_start, finish_msg);
+			thread_state = 1;
 		}
-		thread_state = common->end_simulation_flag;
-		pthread_mutex_unlock(common->thread_lock);
+		pthread_mutex_unlock(data->lock);
 	}
 	return (NULL);
 }
 
-void	init_threads_waits(t_common *common)
+t_philo	**init_philo_array(t_data *data)
+{
+	t_philo	**philos;
+	int		index;
+
+	philos = malloc(sizeof(t_philo) * data->n_of_philos);
+	index = 0;
+	while (index < data->n_of_philos)
+	{
+		philos[index] = malloc(sizeof(t_philo));
+		philos[index]->time_start = data->time_start;
+		philos[index]->lock = data->lock;
+		philos[index]->forks = data->forks;
+		philos[index]->forks_state = data->forks_state;
+		philos[index]->time = data->time;
+		philos[index]->end_simulation_flag = &data->end_simulation_flag;
+		philos[index]->finished_count = &data->finished_count;
+		philos[index]->time_to_starve = data->time_start;
+		philos[index]->id = index;
+		philos[index]->hands_id[(index % 2)] = (index + 1) % data->n_of_philos;
+		philos[index]->hands_id[!(index % 2)] = index;
+		philos[index]->finished_meals = 0;
+		index++;
+	}
+	return (philos);
+}
+
+static void	init_threads_waits(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	while (i < common->n_philo)
+	while (i < data->n_of_philos)
 	{
-		pthread_join(common->threads[i], 0);
+		pthread_join(data->threads[i], NULL);
 		i++;
 	}
 }
 
-void	init_threads(t_common *common)
+void	init_threads(t_data *data)
 {
-	int	i;
-	pthread_t		metre;
-	t_philo			**ph_a;
+	t_philo	**philos;
+	int		i;
 
-	if (!common)
+	if (!data)
+		return ;
+	data->time_start = get_time();
+	philos = init_philo_array(data);
+	if (!philos)
 		return ;
 	i = 0;
-	common->time_start = get_time();
-	ph_a = philo_setup(common);
-	while (i < common->n_philo)
+	data->philo_array = philos;
+	while (i < data->n_of_philos)
 	{
-		pthread_create(&common->threads[i], 0, philo_routine, (void *)ph_a[i]);
-		pthread_create(&common->threads[i + common->n_philo], 0, supervisor_routine, (void *)ph_a[i]);
-		pthread_detach(common->threads[i + common->n_philo]);
+		pthread_create(&data->threads[i], 0, routine, (void *)philos[i]);
+		usleep(10);
 		i++;
 	}
-	if (common->times_must_eat != -1)
+	if (data->time.times_must_eat != -1)
 	{
-		pthread_create(&metre, 0, metre_routine, (void *)common);
-		pthread_detach(metre);
+		pthread_create(&data->metre, 0, metre, (void *)data);
+		pthread_detach(data->metre);
 	}
-	init_threads_waits(common);
-	clean_common(common, ph_a);
+	init_threads_waits(data);
+	clean_data(data);
 }

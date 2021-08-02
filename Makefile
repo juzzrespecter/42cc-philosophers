@@ -11,8 +11,8 @@ SRCS		= philo.c \
 		  philo_ft.c \
 		  philo_parser.c \
 		  philo_init_threads.c \
-		  philo_routines.c \
-		  philo_routines_utils.c
+		  philo_routine.c \
+		  philo_routine_utils.c
 SRCS_BONUS	= philo_bonus.c \
 		  philo_ft.c \
 		  philo_parser.c \

@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_routine_bonus.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/02 20:32:32 by danrodri          #+#    #+#             */
+/*   Updated: 2021/08/02 20:45:50 by danrodri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers_bonus.h"
 
-void		kill_threads(pid_t *pid_arr, int n_philo, int current_pid)
+void	kill_threads(pid_t *pid_arr, int n_philo, int current_pid)
 {
 	int	i;
 
@@ -15,7 +27,7 @@ void		kill_threads(pid_t *pid_arr, int n_philo, int current_pid)
 
 static void	*supervisor_routine(void *routine_args)
 {
-	t_data *data;
+	t_data	*data;
 	long	time_start_meal;
 
 	data = (t_data *)routine_args;
@@ -28,7 +40,6 @@ static void	*supervisor_routine(void *routine_args)
 		{
 			sem_wait(data->process_lock);
 			print_status(DEAD_ID, get_time() - data->time_start, data->id);
-		//	kill_threads(data->pid_arr, data->n_philo, data->id);
 			exit(data->id);
 		}
 	}

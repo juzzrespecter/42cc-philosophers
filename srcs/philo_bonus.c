@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/02 20:30:19 by danrodri          #+#    #+#             */
+/*   Updated: 2021/08/02 20:36:10 by danrodri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers_bonus.h"
 
 static void	*metre_routine(void *metre_args)
@@ -9,7 +21,9 @@ static void	*metre_routine(void *metre_args)
 	finished_meals = 0;
 	while (finished_meals < data->times_must_eat - 1)
 	{
-		while (sem_wait(data->still_eating)){};
+		while (sem_wait(data->meals))
+		{
+		}
 		finished_meals++;
 	}
 	sem_wait(data->process_lock);
@@ -45,7 +59,7 @@ static void	init_threads(t_data *data)
 	int		id;
 
 	if (!data)
-		return ; 
+		return ;
 	id = 0;
 	data->time_start = get_time();
 	data->time_last_meal = data->time_start;
@@ -57,7 +71,7 @@ static void	init_threads(t_data *data)
 		id++;
 	}
 	usleep(100);
-	sem_unlink("/still_eating");
+	sem_unlink("/meals");
 	sem_unlink("/fork_pile");
 	sem_unlink("/status");
 	init_threads_parent_waits(data);
@@ -77,7 +91,7 @@ static t_data	*init_data(int argc, char **argv)
 		data->times_must_eat = ft_atou(argv[5]);
 	data->finished_meals = 0;
 	data->fork_pile = sem_open("/fork_pile", O_CREAT, 0600, data->n_philo);
-	data->still_eating = sem_open("/still_eating", O_CREAT, 0600, data->n_philo);
+	data->meals = sem_open("/meals", O_CREAT, 0600, data->n_philo);
 	data->process_lock = sem_open("/status", O_CREAT, 0600, 1);
 	data->pid_arr = malloc(sizeof(pid_t) * data->n_philo);
 	return (data);
