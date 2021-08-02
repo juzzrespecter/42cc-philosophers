@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 20:42:43 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/02 20:42:47 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/02 22:10:33 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,14 @@ typedef struct s_data
 	pthread_t		*pthread_arr;
 	pthread_t		sv_thread;
 	pid_t			*pid_arr;
-	sem_t			*fork_pile;
+	sem_t			*forks;
+	sem_t			*lock;
+	sem_t			*meals;
+	sem_t			*start;
+	sem_t			*waiter;
 	sem_t			*supervisor_lock;
-	sem_t			*process_lock;
 	long			time_start;
 	long			time_last_meal;
-	sem_t			*still_eating;
 	int				n_philo;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;

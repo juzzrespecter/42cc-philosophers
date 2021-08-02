@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 20:32:16 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/02 21:16:19 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/02 21:42:06 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ void	clean_data(t_data *data)
 	free(data->forks);
 	free(data->threads);
 	free(data->forks_state);
+	pthread_mutex_destroy(data->lock);
+	free(data->lock);
 	free(data);
 }
 
@@ -113,6 +115,7 @@ void	init_threads(t_data *data)
 		usleep(10);
 		i++;
 	}
+	sem_unlink("/start");
 	if (data->time.times_must_eat != -1)
 	{
 		pthread_create(&data->metre, 0, metre, (void *)data);
