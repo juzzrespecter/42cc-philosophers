@@ -13,10 +13,14 @@ SRCS		= philo.c \
 		  philo_init_threads.c \
 		  philo_routine.c \
 		  philo_routine_utils.c
+
 SRCS_BONUS	= philo_bonus.c \
 		  philo_ft.c \
 		  philo_parser.c \
+		  philo_init_threads_bonus.c \
+		  philo_routine_utils_bonus.c \
 		  philo_routine_bonus.c
+
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
 OBJS_BONUS	= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
 INC		= $(addprefix $(DIR_INC), philosophers.h)
