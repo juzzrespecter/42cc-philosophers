@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 20:30:19 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/03 21:48:32 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/04 20:35:23 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ static t_data	*init_data(int argc, char **argv)
 	if (argc == 6)
 		data->times_must_eat = ft_atou(argv[5]);
 	data->finished_meals = 0;
+	data->dead_flag = 0;
 	data->forks = sem_open("/forks", O_CREAT, 0600, data->n_philo);
 	data->meals = sem_open("/meals", O_CREAT, 0600, data->n_philo);
 	data->waiter = sem_open("/waiter", O_CREAT, 0600, data->n_philo / 2);

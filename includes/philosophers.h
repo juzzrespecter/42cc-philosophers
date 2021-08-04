@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 20:42:10 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/02 21:16:32 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/04 21:56:48 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 
 typedef struct s_time
 {
+	int				n_of_philos;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
@@ -50,6 +51,7 @@ typedef struct s_philo
 	int				hands_id[2];
 	int				finished_meals;
 	long			time_to_starve;
+
 }	t_philo;
 
 typedef struct s_data
@@ -79,5 +81,9 @@ void			*routine(void *routine_args);
 int				philo_waits(long time_to_wait, t_philo *data);
 int				philo_checks_if_died(t_philo *data);
 void			msg_lock(int status_id, t_philo *data);
+
+/* test */
+int	turn_state_update(t_philo *data);
+void	turn_state_reset(t_philo *data);
 
 #endif

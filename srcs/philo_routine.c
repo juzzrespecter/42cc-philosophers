@@ -6,13 +6,13 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 20:28:55 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/02 21:09:43 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/04 21:54:41 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static int	philo_takes_fork(int hands_id, t_philo *data)
+static int	philo_takes_fork(int hands_id[2], t_philo *data)
 {
 	int	thread_state;
 	int	fork_state;
@@ -21,14 +21,21 @@ static int	philo_takes_fork(int hands_id, t_philo *data)
 	thread_state = 0;
 	while (fork_state == 1)
 	{
-		thread_state = philo_checks_if_died(data);
-		pthread_mutex_lock(data->forks[hands_id]);
-		fork_state = data->forks_state[hands_id];
+		pthread_mutex_lock(data->forks[hands_id[0]]);
+		fork_state = data->forks_state[hands_id[0]];
+		pthread_mutex_lock(data->forks[hands_id[1]]);
+		fork_state = (data->forks_state[hands_id[1]] || fork_state);
 		if (fork_state == 0)
-			data->forks_state[hands_id] = 1;
-		pthread_mutex_unlock(data->forks[hands_id]);
+		{
+			data->forks_state[hands_id[0]] = 1;
+			data->forks_state[hands_id[1]] = 1;
+		}
+		pthread_mutex_unlock(data->forks[hands_id[1]]);
+		pthread_mutex_unlock(data->forks[hands_id[0]]);
+		thread_state = philo_checks_if_died(data);
 		fork_state = (fork_state && !thread_state);
 	}
+	msg_lock(FORK_ID, data);
 	msg_lock(FORK_ID, data);
 	return (thread_state);
 }
@@ -38,10 +45,7 @@ static int	philo_thinks(t_philo *data)
 	int	thread_state;
 
 	msg_lock(THINK_ID, data);
-	thread_state = philo_takes_fork(data->hands_id[0], data);
-	if (thread_state == 1)
-		return (thread_state);
-	thread_state = philo_takes_fork(data->hands_id[1], data);
+	thread_state = philo_takes_fork(data->hands_id, data);
 	return (thread_state);
 }
 

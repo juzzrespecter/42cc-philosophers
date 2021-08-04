@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 19:45:29 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/03 21:59:19 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/04 20:34:49 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static void	close_and_free(t_data *data)
 {
+	data->dead_flag = 1;
+	sem_post(data->meals);
 	sem_close(data->meals);
 	sem_close(data->forks);
 	sem_close(data->process_lock);
@@ -39,6 +41,8 @@ static void	*metre(void *metre_args)
 		finished_meals++;
 		if (finished_meals != data->n_philo)
 			sem_post(data->process_lock);
+		if (data->dead_flag == 1)
+			return (NULL);
 	}
 	printf("%ld| %s\n", get_time() - data->time_start, finish_msg);
 	kill(data->pid_arr[0], SIGKILL);

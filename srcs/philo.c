@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 20:30:01 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/03 21:53:18 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/04 21:56:56 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ t_time	init_data_time(int argc, char **argv)
 {
 	t_time	time;
 
+	time.n_of_philos = ft_atou(argv[1]);
 	time.time_to_die = ft_atou(argv[2]);
 	time.time_to_eat = ft_atou(argv[3]);
 	time.time_to_sleep = ft_atou(argv[4]);

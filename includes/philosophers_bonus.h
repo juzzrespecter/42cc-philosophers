@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 22:00:05 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/03 22:00:06 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/04 20:35:07 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_data
 	unsigned int	time_to_sleep;
 	int				times_must_eat;
 	int				finished_meals;
+	int				dead_flag;
 	int				id;
 
 	sem_t			*forks;

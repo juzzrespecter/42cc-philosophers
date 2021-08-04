@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 20:32:16 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/03 16:17:40 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/04 21:57:07 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ t_philo	**init_philo_array(t_data *data)
 		philos[index]->finished_count = &data->finished_count;
 		philos[index]->time_to_starve = data->time_start;
 		philos[index]->id = index;
-		philos[index]->hands_id[(index % 2)] = (index + 1) % data->n_of_philos;
-		philos[index]->hands_id[!(index % 2)] = index;
+		philos[index]->hands_id[!(index % 2)] = (index + 1) % data->n_of_philos;
+		philos[index]->hands_id[(index % 2)] = index;
 		philos[index]->finished_meals = 0;
 		index++;
 	}
@@ -112,7 +112,6 @@ void	init_threads(t_data *data)
 	while (i < data->n_of_philos)
 	{
 		pthread_create(&data->threads[i], 0, routine, (void *)philos[i]);
-		usleep(10);
 		i++;
 	}
 	if (data->time.times_must_eat != -1)
