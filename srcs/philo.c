@@ -5,71 +5,100 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/02 20:30:01 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/04 21:56:56 by danrodri         ###   ########.fr       */
+/*   Created: 2021/08/07 17:42:21 by danrodri          #+#    #+#             */
+/*   Updated: 2021/08/07 20:08:18 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-pthread_mutex_t	**init_forks_array(int n_of_philos)
+static int	input_parser(char *input)
 {
-	pthread_mutex_t	**forks;
-	int				count;
+	int	index;
 
-	forks = malloc(sizeof(pthread_mutex_t *) * n_of_philos);
-	if (!forks)
-		return (NULL);
-	count = 0;
-	while (count < n_of_philos)
+	index = 0;
+	while (input[index] == ' ')
+		index++;
+	if (input[index] == '+')
+		index++;
+	while (input[index] >= '0' && input[index] <= '9')
+		index++;
+	return (!input[index]);
+}
+
+static int	philo_err_mgmt(int argc, char **argv)
+{
+	static const char	*err_msg[] = {
+		"invalid number of arguments provided to program.",
+		"invalid input for number_of_philosophers.",
+		"invalid input for time_to_die.",
+		"invalid input for time_to_eat.",
+		"invalid input for time_to_sleep.",
+		"invalid input for number_of_times_philosopher_must_eat"
+	};
+	int			index;
+
+	if (argc < 5 || argc > 6)
 	{
-		forks[count] = malloc(sizeof(pthread_mutex_t));
-		pthread_mutex_init(forks[count], 0);
-		count++;
+		printf("\033[91m[ERROR]\033[0m\t%s\n", err_msg[0]);
+		return (0);
 	}
-	return (forks);
+	index = 1;
+	while (argv[index] && input_parser(argv[index]))
+		index++;
+	if (index != argc)
+		printf("\033[92m[ERROR]\033[0m\t%s\n", err_msg[index]);
+	return (index == argc);
 }
 
-t_time	init_data_time(int argc, char **argv)
+static void	*metre(void *metre_args)
 {
-	t_time	time;
+	t_thread_info	*ph_info;
+	int				thread_state;
+	char			*status;
 
-	time.n_of_philos = ft_atou(argv[1]);
-	time.time_to_die = ft_atou(argv[2]);
-	time.time_to_eat = ft_atou(argv[3]);
-	time.time_to_sleep = ft_atou(argv[4]);
-	time.times_must_eat = -1;
-	if (argc == 6)
-		time.times_must_eat = ft_atou(argv[5]);
-	return (time);
-}
-
-t_data	*init_data(int argc, char **argv)
-{
-	t_data		*data;
-
-	data = malloc(sizeof(t_data));
-	if (!data)
-		return (NULL);
-	data->n_of_philos = ft_atou(argv[1]);
-	data->time = init_data_time(argc, argv);
-	data->threads = malloc(sizeof(pthread_t) * data->n_of_philos);
-	data->lock = malloc(sizeof(pthread_mutex_t));
-	data->forks_state = malloc(sizeof(int) * data->n_of_philos);
-	data->forks = init_forks_array(data->n_of_philos);
-	if (!data->threads || !data->lock || !data->forks || !data->forks_state)
-		return (NULL);
-	memset(data->forks_state, 0, sizeof(int) * data->n_of_philos);
-	pthread_mutex_init(data->lock, 0);
-	data->end_simulation_flag = 0;
-	data->finished_count = 0;
-	return (data);
+	ph_info = (t_thread_info *)metre_args;
+	thread_state = 0;
+	status = "\033[96mall philosophers finished their meals.\033[0m";
+	while (!thread_state)
+	{
+		if (ph_info->finished_meals == ph_info->ph_count)
+		{
+			pthread_mutex_lock(&ph_info->lock);
+			if (!ph_info->finish_flag)
+				printf("%ld| %s\n", get_time() - ph_info->time_start, status);
+			ph_info->finish_flag = 1;
+			pthread_mutex_unlock(&ph_info->lock);
+		}
+		thread_state = ph_info->finish_flag;
+	}
+	return (NULL);
 }
 
 int	main(int argc, char **argv)
 {
+	t_thread_info	*ph_info;
+	pthread_t		th_metre;
+	int				index;
+
 	if (!philo_err_mgmt(argc, argv))
 		return (EXIT_FAILURE);
-	init_threads(init_data(argc, argv));
+	ph_info = thread_info_setup(argc, argv);
+	if (!ph_info)
+		return (EXIT_FAILURE);
+	index = 0;
+	while (index < ph_info->ph_count)
+	{
+		ph_info->time_to_starve[index] = ph_info->time_start;
+		pthread_create(&ph_info->threads[index], 0, routine, (void *)ph_info);
+		index++;
+	}
+	if (ph_info->times_must_eat != -1)
+	{
+		pthread_create(&th_metre, 0, metre, (void *)ph_info);
+		pthread_detach(th_metre);
+	}
+	philo_health_check(ph_info);
+	free_data(ph_info);
 	return (EXIT_SUCCESS);
 }

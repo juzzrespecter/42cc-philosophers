@@ -5,96 +5,93 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/02 20:28:55 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/04 21:54:41 by danrodri         ###   ########.fr       */
+/*   Created: 2021/08/07 18:26:22 by danrodri          #+#    #+#             */
+/*   Updated: 2021/08/07 20:46:24 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static int	philo_takes_fork(int hands_id[2], t_philo *data)
+static int	get_id(void)
 {
-	int	thread_state;
-	int	fork_state;
+	static int	id_counter = -1;
 
-	fork_state = 1;
-	thread_state = 0;
-	while (fork_state == 1)
+	id_counter++;
+	return (id_counter); 
+}
+
+static int	philo_thinks(int id, t_thread_info *ph_info)
+{
+	pthread_mutex_lock(&ph_info->lock);
+	if (!ph_info->finish_flag)
+		print_status(THINK_ID, get_time() - ph_info->time_start, id);
+	pthread_mutex_unlock(&ph_info->lock);
+	pthread_mutex_lock(&ph_info->forks[(id + !(id % 2)) % ph_info->ph_count]);
+	ph_info->fork_state[(id + (id % 2)) % ph_info->ph_count] = 1;
+	if (ph_info->finish_flag)
+		return (1);
+	print_status(FORK_ID, get_time() - ph_info->time_start, id);
+	pthread_mutex_lock(&ph_info->forks[(id + (id % 2)) % ph_info->ph_count]);
+	ph_info->fork_state[(id + !(id % 2)) % ph_info->ph_count] = 1;
+	if (ph_info->finish_flag)
+		return (1);
+	print_status(FORK_ID, get_time() - ph_info->time_start, id);
+	return (0);
+}
+
+static int	philo_eats(int id, t_thread_info *ph_info)
+{
+	pthread_mutex_lock(&ph_info->lock);
+	ph_info->time_to_starve[id] = get_time();
+	if (!ph_info->finish_flag)
+		print_status(EAT_ID, get_time() - ph_info->time_start, id);
+	pthread_mutex_unlock(&ph_info->lock);
+	philo_waits(ph_info->time_to_eat);
+	ph_info->fork_state[id] = 0;
+	ph_info->fork_state[id + 1] = 0;
+	pthread_mutex_unlock(&ph_info->forks[id % ph_info->ph_count]);
+	pthread_mutex_unlock(&ph_info->forks[(id + 1) % ph_info->ph_count]);
+	ph_info->meals[id] += (ph_info->times_must_eat != -1);
+	if (ph_info->meals[id] == ph_info->times_must_eat)
 	{
-		pthread_mutex_lock(data->forks[hands_id[0]]);
-		fork_state = data->forks_state[hands_id[0]];
-		pthread_mutex_lock(data->forks[hands_id[1]]);
-		fork_state = (data->forks_state[hands_id[1]] || fork_state);
-		if (fork_state == 0)
-		{
-			data->forks_state[hands_id[0]] = 1;
-			data->forks_state[hands_id[1]] = 1;
-		}
-		pthread_mutex_unlock(data->forks[hands_id[1]]);
-		pthread_mutex_unlock(data->forks[hands_id[0]]);
-		thread_state = philo_checks_if_died(data);
-		fork_state = (fork_state && !thread_state);
+		pthread_mutex_lock(&ph_info->lock);
+		ph_info->finished_meals++;
+		pthread_mutex_unlock(&ph_info->lock);
 	}
-	msg_lock(FORK_ID, data);
-	msg_lock(FORK_ID, data);
-	return (thread_state);
+	return (ph_info->finish_flag);
 }
 
-static int	philo_thinks(t_philo *data)
+static int	philo_sleeps(int id, t_thread_info *ph_info)
 {
-	int	thread_state;
-
-	msg_lock(THINK_ID, data);
-	thread_state = philo_takes_fork(data->hands_id, data);
-	return (thread_state);
+	pthread_mutex_lock(&ph_info->lock);
+	if (!ph_info->finish_flag)
+		print_status(SLEEP_ID, get_time() - ph_info->time_start, id);
+	pthread_mutex_unlock(&ph_info->lock);
+	philo_waits(ph_info->time_to_sleep);
+	return (ph_info->finish_flag);
 }
 
-static int	philo_eats(t_philo *data)
+void	*routine(void *args)
 {
-	int	thread_state;
-
-	msg_lock(EAT_ID, data);
-	data->time_to_starve = get_time();
-	data->finished_meals += !(data->time.times_must_eat == -1);
-	thread_state = philo_waits(data->time.time_to_eat, data);
-	pthread_mutex_lock(data->forks[data->hands_id[0]]);
-	pthread_mutex_lock(data->forks[data->hands_id[1]]);
-	data->forks_state[data->hands_id[0]] = 0;
-	data->forks_state[data->hands_id[1]] = 0;
-	pthread_mutex_unlock(data->forks[data->hands_id[0]]);
-	pthread_mutex_unlock(data->forks[data->hands_id[1]]);
-	if (data->finished_meals == data->time.times_must_eat)
-	{
-		pthread_mutex_lock(data->lock);
-		*data->finished_count += 1;
-		pthread_mutex_unlock(data->lock);
-	}
-	return (thread_state);
-}
-
-static int	philo_sleeps(t_philo *data)
-{
-	msg_lock(SLEEP_ID, data);
-	return (philo_waits(data->time.time_to_sleep, data));
-}
-
-void	*routine(void *routine_args)
-{
-	static	int (*philo_status[])(t_philo *) = {
+	static			int (*philo_status[])(int, t_thread_info *) = {
 		philo_thinks,
 		philo_eats,
 		philo_sleeps
 	};
-	int			status_id;
-	int			status_ret;
-	t_philo		*data;
+	t_thread_info	*ph_info;
+	int				id;
+	int				status_id;
+	int				thread_state;
 
+	ph_info = (t_thread_info *)args;
+	pthread_mutex_lock(&ph_info->lock);
+	id = get_id();
+	pthread_mutex_unlock(&ph_info->lock);
+	thread_state = 0;
 	status_id = 0;
-	status_ret = 0;
-	data = (t_philo *)routine_args;
-	while (!status_ret)
+	while (!thread_state)
 	{
-		status_ret = philo_status[status_id](data);
+		thread_state = philo_status[status_id](id, ph_info);
 		status_id = (status_id + 1) % 3;
 	}
 	return (NULL);
