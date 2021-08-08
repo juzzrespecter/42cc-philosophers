@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/07 19:40:00 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/07 20:09:38 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/08 18:55:02 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,21 @@ void	philo_waits(long time_to_wait)
 		usleep(500);
 }
 
-void	print_status(int status_id, long time, int philo_id)
+void	print_status(int status_id, long timestamp, int philo_id)
 {
 	static const char	*status_msg[] = {
 		"\033[33mis thinking.\033[0m",
 		"has taken a fork.",
 		"\033[32mis eating.\033[0m",
 		"\033[92mis sleeping.\033[0m",
-		"\033[91mhas died.\033[0m"
+		"\033[91mhas died.\033[0m",
+		"\033[96mall philosophers finished their meals.\033[0m"
 	};
 
-	printf("%ld| %d %s\n", time, philo_id + 1, status_msg[status_id]);
+	if (philo_id == -1)
+		printf("%ld| %s\n", timestamp, status_msg[status_id]);
+	else
+		printf("%ld| %d %s\n", timestamp, philo_id + 1, status_msg[status_id]);
 }
 
 void	*free_data(t_thread_info *ph_info)
@@ -75,7 +79,6 @@ void	*free_data(t_thread_info *ph_info)
 	}
 	free(ph_info->time_to_starve);
 	free(ph_info->meals);
-	free(ph_info->fork_state);
 	//free(ph_info->forks);
 	free(ph_info->threads);
 	pthread_mutex_destroy(&ph_info->lock);
