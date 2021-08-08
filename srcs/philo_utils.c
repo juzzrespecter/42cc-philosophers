@@ -47,8 +47,7 @@ void	philo_waits(long time_to_wait)
 
 	time_start = get_time();
 	while (get_time() - time_start < time_to_wait)
-	{
-	}
+		usleep(500);
 }
 
 void	print_status(int status_id, long time, int philo_id)
@@ -77,7 +76,7 @@ void	*free_data(t_thread_info *ph_info)
 	free(ph_info->time_to_starve);
 	free(ph_info->meals);
 	free(ph_info->fork_state);
-	free(ph_info->forks);
+	//free(ph_info->forks);
 	free(ph_info->threads);
 	pthread_mutex_destroy(&ph_info->lock);
 	free(ph_info);

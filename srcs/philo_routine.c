@@ -12,6 +12,8 @@
 
 #include "philosophers.h"
 
+// use detach
+
 static int	get_id(void)
 {
 	static int	id_counter = -1;
@@ -89,6 +91,8 @@ void	*routine(void *args)
 	pthread_mutex_unlock(&ph_info->lock);
 	thread_state = 0;
 	status_id = 0;
+	if (!(id % 2))
+		pthread_mutex_lock(&ph_info->start_lock); /* to test */
 	while (!thread_state)
 	{
 		thread_state = philo_status[status_id](id, ph_info);

@@ -19,9 +19,15 @@
 # include <string.h>
 # include <pthread.h>
 
+# define THINK_ID 0
+# define FORK_ID 1
+# define EAT_ID 2
+# define SLEEP_ID 3
+# define DEAD_ID 4
+
 typedef struct s_thread_info
 {
-	int				ph_cont;
+	int				ph_count;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
@@ -33,11 +39,23 @@ typedef struct s_thread_info
 	pthread_mutex_t	*forks;
 	pthread_t		*threads;
 
-	int				meals_finished;
+	int				finished_meals;
 	int				finish_flag;
 	pthread_mutex_t	lock;
+	long			time_start;
 }	t_thread_info;
 
+
+t_thread_info	*thread_info_setup(int argc, char **argv);
+void		philo_health_check(t_thread_info *ph_info);
+
+void		*routine(void *args);
+
+int		ft_atoi(char *a);
+long		get_time(void);
+void		philo_waits(long time_to_wait);
+void		print_status(int status_id, long time, int philo_id);
+void		*free_data(t_thread_info *ph_info);
 /* ... */
 
 #endif
