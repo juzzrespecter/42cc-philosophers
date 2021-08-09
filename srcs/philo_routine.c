@@ -12,6 +12,14 @@
 
 #include "philosophers.h"
 
+/*
+ * mover acciones a actions.c
+ *	mover aqui: metre y waiter (cambiar nombre a metre??)
+ *
+ *
+ *
+ */
+
 static int	philo_thinks(int id, t_thread_info *ph_info)
 {
 	msg_lock(THINK_ID, id, ph_info);

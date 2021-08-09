@@ -12,45 +12,6 @@
 
 #include "philosophers.h"
 
-static int	input_parser(char *input)
-{
-	int	index;
-
-	index = 0;
-	while (input[index] == ' ')
-		index++;
-	if (input[index] == '+')
-		index++;
-	while (input[index] >= '0' && input[index] <= '9')
-		index++;
-	return (!input[index]);
-}
-
-static int	philo_err_mgmt(int argc, char **argv)
-{
-	static const char	*err_msg[] = {
-		"invalid number of arguments provided to program.",
-		"invalid input for number_of_philosophers.",
-		"invalid input for time_to_die.",
-		"invalid input for time_to_eat.",
-		"invalid input for time_to_sleep.",
-		"invalid input for number_of_times_philosopher_must_eat"
-	};
-	int			index;
-
-	if (argc < 5 || argc > 6)
-	{
-		printf("\033[91m[ERROR]\033[0m\t%s\n", err_msg[0]);
-		return (0);
-	}
-	index = 1;
-	while (argv[index] && input_parser(argv[index]))
-		index++;
-	if (index != argc)
-		printf("\033[91m[ERROR]\033[0m\t%s\n", err_msg[index]);
-	return (index == argc);
-}
-
 static void	*metre(void *metre_args)
 {
 	t_thread_info	*ph_info;
@@ -91,49 +52,12 @@ static void	philo_health_check(t_thread_info *ph_info)
 
 /* test */
 
-void	wait_for_turn_to_finish(int turn_id, t_thread_info *ph)
-{
-	int	count = 0;
-
-	count += !turn_id;
-	while (count < ph->ph_count - (ph->ph_count % 2))
-	{
-		//printf("pos %d: state %d\n", count, ph->waiter_state[count]);
-		count += (ph->waiter_state[count] * 2);
-	}
-	if ((ph->ph_count % 2) && !turn_id)
-		while (!ph->waiter_state[ph->ph_count - 1]) {};
-}
-
-void	lock_all(t_thread_info *ph)
-{
-	int i = 0;
-
-	while (i < ph->ph_count)
-	{
-		//printf("locking %d...\n", i);
-		pthread_mutex_lock(&ph->waiter[i++]);
-	}
-}
-
-void	unlock_some(int turn_id, t_thread_info *ph)
-{
-	int	id = turn_id;
-
-	while (id < ph->ph_count - (ph->ph_count % 2))
-	{
-		//printf("unlocking %d...\n", turn_id);
-		pthread_mutex_unlock(&ph->waiter[id]);
-		id += 2;
-	}
-	if ((ph->ph_count % 2) && !turn_id)
-		pthread_mutex_unlock(&ph->waiter[ph->ph_count - 1]);
-}
-
-void	*waiter_t(void *arg)
+void	*waiter_th(void *arg)
 {
 	t_thread_info *ph = (t_thread_info *)arg;
-	int		index = 0;
+	int		start_index = 0;
+	int		lock_index = 0;
+	int		move_index = 0;
 
 	pthread_mutex_lock(&ph->waiter_start);
 	/*while (!ph->finish_flag)
@@ -142,17 +66,48 @@ void	*waiter_t(void *arg)
 		unlock_some(index, ph);
 		index = !index;
 	}*/
-	while !flag
+/*	while !flag
 		unlock from index to floor[n / 2] ->index = index % n; index += 2
 		wait for unlocked to finish
 		index + 1 % n
+	lock_index = 0;*/
+	while (!ph_info->finish_flag)
+	{
+		/* 
+		 * indice que lleva el inicio del array, aumenta 1 cada ciclo principal
+		 * indice que se mueve a traves del array, aumenta 2 cada ciclo secundario
+		 * indice que lleva la cuenta del numero de elementos chequeados, aumenta 1 cada ciclo secundario
+		 */
+
+		while (move_index < ph_info->ph_count / 2)
+		{
+			pthread_unlock(ph_info->waiter[(start_index + lock_index) % ph_info->ph_count]);
+			lock_index += 2;
+			move_index++;
+		}
+		lock_index = 0;
+		move_index = 0;
+		while (move_index < ph_info->ph_count / 2)
+		{
+			move_index += ph_info->waiter_state[(start_index + lock_index) % ph_info->ph_count];
+			lock_index += 2;
+		}
+		lock_index = 0;
+		move_index = 0;
+		start_index = (start_index + 1) % ph_info->ph_count;
+	}
 	return (NULL);
 }
 
-void	test(t_thread_info *ph_info)
+void	philo_init_waiter(t_thread_info *ph_info)
 {
 	pthread_t	waiter;
+	int		index;
 
+	index = 0;
+	pthread_mutex_lock(&ph_info->waiter_start);
+	while (index < ph_info->ph_count)
+		pthread_mutex_lock(ph_info->waiter[index++]);
 	pthread_create(&waiter, 0, waiter_t, (void *)ph_info);
 	pthread_detach(waiter);
 }
@@ -170,10 +125,10 @@ int	main(int argc, char **argv)
 	ph_info = thread_info_setup(argc, argv);
 	if (!ph_info)
 		return (EXIT_FAILURE);
+	philo_init_waiter(ph_info);
+	/* philo init threads */
+	/* philo init metre si procede */
 	index = 0;
-	pthread_mutex_lock(&ph_info->waiter_start); /* test */
-	lock_all(ph_info);
-	test(ph_info); 							/* test */
 	while (index < ph_info->ph_count)
 	{
 		ph_info->time_to_starve[index] = ph_info->time_start;
