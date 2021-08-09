@@ -8,17 +8,19 @@ DIR_OBJS	= objs/
 DIR_INC		= includes/
 
 SRCS		= philo.c \
+		  philo_err_mgmt.c \
 		  philo_thread_setup.c \
 		  philo_routine.c \
-		  philo_routine_utils.c \
-		  philo_utils.c
+		  philo_actions.c \
+		  philo_utils.c \
+		  ftphilo.c
 
 SRCS_BONUS	= philo_bonus.c \
-		  philo_ft.c \
-		  philo_parser.c \
+		  philo_err_mgmt.c \
 		  philo_init_threads_bonus.c \
 		  philo_routine_utils_bonus.c \
-		  philo_routine_bonus.c
+		  philo_routine_bonus.c \
+		  ftphilo.c
 
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
 OBJS_BONUS	= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))

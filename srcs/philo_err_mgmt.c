@@ -1,6 +1,16 @@
-// aqui va un header
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_err_mgmt.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/09 17:48:00 by danrodri          #+#    #+#             */
+/*   Updated: 2021/08/09 17:53:19 by danrodri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include "philosophers.h"
+#include "philosophers.h"
 
 static int	input_parser(char *input)
 {
@@ -26,7 +36,7 @@ int	philo_err_mgmt(int argc, char **argv)
 		"invalid input for time_to_sleep.",
 		"invalid input for number_of_times_philosopher_must_eat"
 	};
-	int			index;
+	int					index;
 
 	if (argc < 5 || argc > 6)
 	{

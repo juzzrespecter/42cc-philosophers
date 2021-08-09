@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_routine_utils.c                              :+:      :+:    :+:   */
+/*   philo_actions.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/08 18:57:04 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/08 18:59:30 by danrodri         ###   ########.fr       */
+/*   Created: 2021/08/09 16:22:11 by danrodri          #+#    #+#             */
+/*   Updated: 2021/08/09 17:47:34 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,30 @@ void	msg_lock(int status_id, int philo_id, t_thread_info *ph_info)
 	pthread_mutex_unlock(&ph_info->lock);
 }
 
-static int	philo_eats(int id, t_thread_info *ph_info)
+int	philo_thinks(int id, t_thread_info *ph_info)
+{
+	msg_lock(THINK_ID, id, ph_info);
+	pthread_mutex_lock(&ph_info->waiter[id]);
+	ph_info->waiter_state[id] = 0;
+	pthread_mutex_lock(&ph_info->forks[(id + !(id % 2)) % ph_info->ph_count]);
+	if (ph_info->finish_flag)
+		return (1);
+	msg_lock(FORK_ID, id, ph_info);
+	pthread_mutex_lock(&ph_info->forks[(id + (id % 2)) % ph_info->ph_count]);
+	if (ph_info->finish_flag)
+		return (1);
+	msg_lock(FORK_ID, id, ph_info);
+	return (0);
+}
+
+int	philo_eats(int id, t_thread_info *ph_info)
 {
 	ph_info->time_to_starve[id] = get_time();
 	msg_lock(EAT_ID, id, ph_info);
 	philo_waits(ph_info->time_to_eat);
 	pthread_mutex_unlock(&ph_info->forks[id % ph_info->ph_count]);
 	pthread_mutex_unlock(&ph_info->forks[(id + 1) % ph_info->ph_count]);
-	ph_info->waiter_state[id] = 1 ; /* test */
+	ph_info->waiter_state[id] = 1 ;
 	ph_info->meals[id] += (ph_info->times_must_eat != -1);
 	if (ph_info->meals[id] == ph_info->times_must_eat)
 	{
@@ -44,9 +60,10 @@ static int	philo_eats(int id, t_thread_info *ph_info)
 	}
 	return (ph_info->finish_flag);
 }
-/*
- * cambiar header
- * 	utils -> actions
- *	faltan sleeps y thinks
- *
- */
+
+int	philo_sleeps(int id, t_thread_info *ph_info)
+{
+	msg_lock(SLEEP_ID, id, ph_info);
+	philo_waits(ph_info->time_to_sleep);
+	return (ph_info->finish_flag);
+}

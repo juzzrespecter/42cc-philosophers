@@ -6,64 +6,80 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/07 18:26:22 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/08 21:41:49 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/09 17:51:18 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-/*
- * mover acciones a actions.c
- *	mover aqui: metre y waiter (cambiar nombre a metre??)
- *
- *
- *
- */
-
-static int	philo_thinks(int id, t_thread_info *ph_info)
+static void	waiter_starts_new_turn(int index, t_thread_info *ph_info)
 {
-	msg_lock(THINK_ID, id, ph_info);
-	pthread_mutex_lock(&ph_info->waiter[id]);	/* test */
-	ph_info->waiter_state[id] = 0;				/* test */
-	pthread_mutex_lock(&ph_info->forks[(id + !(id % 2)) % ph_info->ph_count]);
-	if (ph_info->finish_flag)
-		return (1);
-	msg_lock(FORK_ID, id, ph_info);
-	pthread_mutex_lock(&ph_info->forks[(id + (id % 2)) % ph_info->ph_count]);
-	if (ph_info->finish_flag)
-		return (1);
-	msg_lock(FORK_ID, id, ph_info);
-	return (0);
-}
+	int	count;
 
-static int	philo_eats(int id, t_thread_info *ph_info)
-{
-	ph_info->time_to_starve[id] = get_time();
-	msg_lock(EAT_ID, id, ph_info);
-	philo_waits(ph_info->time_to_eat);
-	pthread_mutex_unlock(&ph_info->forks[id % ph_info->ph_count]);
-	pthread_mutex_unlock(&ph_info->forks[(id + 1) % ph_info->ph_count]);
-	ph_info->waiter_state[id] = 1 ; /* test */
-	ph_info->meals[id] += (ph_info->times_must_eat != -1);
-	if (ph_info->meals[id] == ph_info->times_must_eat)
+	count = 0;
+	while (count < ph_info->ph_count / 2)
 	{
-		pthread_mutex_lock(&ph_info->lock);
-		ph_info->finished_meals++;
-		pthread_mutex_unlock(&ph_info->lock);
+		pthread_mutex_unlock(&ph_info->waiter[index % ph_info->ph_count]);
+		index += 2;
+		count++;
 	}
-	return (ph_info->finish_flag);
 }
 
-static int	philo_sleeps(int id, t_thread_info *ph_info)
+static void	waiter_waits_for_turn_to_finish(int index, t_thread_info *ph_info)
 {
-	msg_lock(SLEEP_ID, id, ph_info);
-	philo_waits(ph_info->time_to_sleep);
-	return (ph_info->finish_flag);
+	int	count;
+
+	count = 0;
+	while (count < ph_info->ph_count / 2)
+	{
+		if (ph_info->waiter_state[index % ph_info->ph_count])
+		{
+			count += ph_info->waiter_state[index % ph_info->ph_count];
+			index += 2;
+		}
+		usleep(100);
+	}
 }
 
-void	*routine(void *args)
+void	*waiter_th(void *arg)
 {
-	static			int (*philo_status[])(int, t_thread_info *) = {
+	t_thread_info	*ph_info;
+	int				index;
+
+	ph_info = (t_thread_info *)arg;
+	index = 0;
+	pthread_mutex_lock(&ph_info->waiter_start);
+	while (!ph_info->finish_flag)
+	{
+		waiter_starts_new_turn(index, ph_info);
+		waiter_waits_for_turn_to_finish(index, ph_info);
+		index = (index + 1) % ph_info->ph_count;
+	}
+	return (NULL);
+}
+
+void	*metre_th(void *metre_args)
+{
+	t_thread_info	*ph_info;
+
+	ph_info = (t_thread_info *)metre_args;
+	while (!ph_info->finish_flag)
+	{
+		if (ph_info->finished_meals == ph_info->ph_count)
+		{
+			pthread_mutex_lock(&ph_info->lock);
+			if (!ph_info->finish_flag)
+				print_status(FINISH_ID, get_time() - ph_info->time_start, -1);
+			ph_info->finish_flag = 1;
+			pthread_mutex_unlock(&ph_info->lock);
+		}
+	}
+	return (NULL);
+}
+
+void	*philo_th(void *args)
+{
+	static		int (*philo_status[])(int, t_thread_info *) = {
 		philo_thinks,
 		philo_eats,
 		philo_sleeps
