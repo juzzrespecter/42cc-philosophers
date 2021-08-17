@@ -22,7 +22,9 @@ static void	print_lock(int status_id, t_data *data)
 void	philosopher_thinks(t_data *data)
 {
 	print_lock(THINK_ID, data);
-	sem_wait(data->waiter);
+	printf("%d is waiting for a waiter...\n", data->id + 1);
+	sem_wait(data->waiter_lock);
+	printf("%d is being attended by a waiter (w = 0)\n", data->id + 1);
 	sem_wait(data->forks);
 	print_lock(FORK_ID, data);
 	sem_wait(data->forks);
@@ -32,14 +34,13 @@ void	philosopher_thinks(t_data *data)
 void	philosopher_eats(t_data *data)
 {
 	print_lock(EAT_ID, data);
-	sem_wait(data->supervisor_lock);
 	data->time_last_meal = get_time();
 	data->finished_meals += (data->times_must_eat != -1);
-	sem_post(data->supervisor_lock);
 	usleep(data->time_to_eat * 1000);
+	sem_post(data->waiter_lock);
+	printf("waiter is ready to serve (w = 1)\n");
 	sem_post(data->forks);
 	sem_post(data->forks);
-	sem_post(data->waiter);
 	if (data->finished_meals == data->times_must_eat)
 	{
 		sem_post(data->meals);

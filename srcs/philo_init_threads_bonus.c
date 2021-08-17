@@ -19,9 +19,8 @@ static void	close_and_free(t_data *data)
 	sem_close(data->meals);
 	sem_close(data->forks);
 	sem_close(data->process_lock);
-	sem_close(data->waiter);
 	sem_close(data->start_lock);
-	sem_close(data->finish_lock);
+	sem_close(data->waiter_lock);
 	free(data->pid_arr);
 	free(data);
 }
@@ -29,11 +28,9 @@ static void	close_and_free(t_data *data)
 static void	*metre(void *metre_args)
 {
 	t_data	*data;
-	char	*finish_msg;
 	int		finished_meals;
 
 	data = (t_data *)metre_args;
-	finish_msg = "\033[96mall philosophers finished eating.\033[0m";
 	finished_meals = 0;
 	while (finished_meals < data->n_philo)
 	{
@@ -44,7 +41,7 @@ static void	*metre(void *metre_args)
 		if (data->dead_flag == 1)
 			return (NULL);
 	}
-	printf("%ld| %s\n", get_time() - data->time_start, finish_msg);
+	print_status(FINISHED_ID, get_time() - data->time_start, -1);
 	kill(data->pid_arr[0], SIGKILL);
 	return (NULL);
 }
@@ -70,10 +67,9 @@ static void	init_threads_parent_waits(t_data *data)
 
 	sem_unlink("/forks");
 	sem_unlink("/meals");
-	sem_unlink("/waiter");
 	sem_unlink("/process_lock");
 	sem_unlink("/start_lock");
-	sem_unlink("/finish_lock");
+	sem_unlink("/waiter_lock");
 	count = 0;
 	while (count < data->n_philo)
 	{
@@ -105,7 +101,6 @@ void	init_threads(t_data *data)
 		sem_wait(data->start_lock);
 		count++;
 	}
-	sem_wait(data->finish_lock);
 	data->time_start = get_time();
 	while (id < data->n_philo)
 	{

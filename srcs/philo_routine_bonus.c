@@ -20,9 +20,9 @@ static void	*supervisor(void *routine_args)
 	data = (t_data *)routine_args;
 	while (1)
 	{
-		sem_wait(data->supervisor_lock);
+		//sem_wait(data->supervisor_lock);
 		time_last_meal = get_time() - data->time_last_meal;
-		sem_post(data->supervisor_lock);
+		//sem_post(data->supervisor_lock);
 		if (time_last_meal > data->time_to_die)
 		{
 			sem_wait(data->process_lock);
@@ -39,8 +39,8 @@ void	philosopher_process_starts(int id, t_data *data)
 	data->id = id;
 	sem_wait(data->start_lock);
 	data->time_last_meal = data->time_start;
-	data->supervisor_lock = sem_open("/supervisor_lock", O_CREAT, 0600, 1);
-	sem_unlink("/supervisor_lock");
+//	data->supervisor_lock = sem_open("/supervisor_lock", O_CREAT, 0600, 1);
+//	sem_unlink("/supervisor_lock");
 	pthread_create(&supervisor_t, 0, supervisor, (void *)data);
 	pthread_detach(supervisor_t);
 	while (1)

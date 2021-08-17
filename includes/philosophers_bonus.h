@@ -28,6 +28,7 @@
 # define EAT_ID 2
 # define SLEEP_ID 3
 # define DEAD_ID 4
+# define FINISHED_ID 5
 
 typedef struct s_data
 {
@@ -47,11 +48,9 @@ typedef struct s_data
 
 	sem_t			*forks;
 	sem_t			*meals;
-	sem_t			*waiter;
 	sem_t			*process_lock;
 	sem_t			*start_lock;
-	sem_t			*finish_lock;
-	sem_t			*supervisor_lock;
+	sem_t			*waiter_lock;
 }	t_data;
 
 unsigned int	ft_atou(char *a);
@@ -61,6 +60,7 @@ void			print_status(int status_id, long time, int philo_id);
 long			get_time(void);
 int				philo_err_mgmt(int argc, char **argv);
 void			init_threads(t_data *data);
+int			ft_atoi(char *a);
 
 void			philosopher_process_starts(int id, t_data *data);
 void			philosopher_thinks(t_data *data);

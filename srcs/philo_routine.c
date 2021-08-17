@@ -12,47 +12,47 @@
 
 #include "philosophers.h"
 
-static void	waiter_starts_new_turn(int index, t_thread_info *ph_info)
+static void	crowd_ctrl_starts_new_turn(int index, t_thread_info *ph_info)
 {
 	int	count;
 
 	count = 0;
 	while (count < ph_info->ph_count / 2)
 	{
-		pthread_mutex_unlock(&ph_info->waiter[index % ph_info->ph_count]);
+		pthread_mutex_unlock(&ph_info->crowd_ctrl[index % ph_info->ph_count]);
 		index += 2;
 		count++;
 	}
 }
 
-static void	waiter_waits_for_turn_to_finish(int index, t_thread_info *ph_info)
+static void	crowd_ctrl_waits_for_turn_to_finish(int index, t_thread_info *ph_info)
 {
 	int	count;
 
 	count = 0;
 	while (count < ph_info->ph_count / 2)
 	{
-		if (ph_info->waiter_state[index % ph_info->ph_count])
+		if (ph_info->crowd_ctrl_state[index % ph_info->ph_count])
 		{
-			count += ph_info->waiter_state[index % ph_info->ph_count];
+			count += ph_info->crowd_ctrl_state[index % ph_info->ph_count];
 			index += 2;
 		}
 		usleep(100);
 	}
 }
 
-void	*waiter_th(void *arg)
+void	*crowd_ctrl_th(void *arg)
 {
 	t_thread_info	*ph_info;
 	int				index;
 
 	ph_info = (t_thread_info *)arg;
 	index = 0;
-	pthread_mutex_lock(&ph_info->waiter_start);
+	pthread_mutex_lock(&ph_info->crowd_ctrl_start);
 	while (!ph_info->finish_flag)
 	{
-		waiter_starts_new_turn(index, ph_info);
-		waiter_waits_for_turn_to_finish(index, ph_info);
+		crowd_ctrl_starts_new_turn(index, ph_info);
+		crowd_ctrl_waits_for_turn_to_finish(index, ph_info);
 		index = (index + 1) % ph_info->ph_count;
 	}
 	return (NULL);
@@ -71,7 +71,7 @@ void	*metre_th(void *metre_args)
 			if (!ph_info->finish_flag)
 				print_status(FINISH_ID, get_time() - ph_info->time_start, -1);
 			ph_info->finish_flag = 1;
-			pthread_mutex_unlock(&ph_info->lock);
+			pthread_mutex_unlock(&ph_info->lock); // check this
 		}
 	}
 	return (NULL);
