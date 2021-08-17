@@ -6,13 +6,34 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/07 19:39:41 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/09 17:50:03 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/17 17:07:20 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-/* to do: limpiar esta mierda */
+void	*free_data(t_thread_info *ph_info)
+{
+	int	index;
+
+	index = 0;
+	while (ph_info->forks && index < ph_info->ph_count)
+	{
+		pthread_mutex_destroy(&ph_info->forks[index]);
+		pthread_mutex_destroy(&ph_info->crowd_ctrl[index]);
+		index++;
+	}
+	free(ph_info->time_to_starve);
+	free(ph_info->crowd_ctrl);
+	free(ph_info->meals);
+	free(ph_info->forks);
+	free(ph_info->threads);
+	pthread_mutex_destroy(&ph_info->lock);
+	pthread_mutex_destroy(&ph_info->finish_lock);
+	pthread_mutex_destroy(&ph_info->crowd_ctrl_start);
+	free(ph_info);
+	return (NULL);
+}
 
 static t_thread_info	*thread_info_shared_state(t_thread_info *ph_info)
 {
@@ -23,15 +44,14 @@ static t_thread_info	*thread_info_shared_state(t_thread_info *ph_info)
 	ph_info->meals = malloc(sizeof(int) * ph_info->ph_count);
 	ph_info->forks = malloc(sizeof(pthread_mutex_t) * ph_info->ph_count);
 	ph_info->threads = malloc(sizeof(pthread_t) * ph_info->ph_count);
+	ph_info->crowd_ctrl = malloc(sizeof(pthread_mutex_t) * ph_info->ph_count);
 	if (!ph_info->time_to_starve || !ph_info->forks || !ph_info->threads
-		   || !ph_info->meals)
+		   || !ph_info->meals || !ph_info->crowd_ctrl)
 		return (free_data(ph_info));
-	ph_info->waiter = malloc(sizeof(pthread_mutex_t) * ph_info->ph_count);
-	ph_info->waiter_state = malloc(sizeof(int) * ph_info->ph_count);
-	memset(ph_info->waiter_state, 0, sizeof(int) * ph_info->ph_count);
 	while (index < ph_info->ph_count)
-		pthread_mutex_init(&ph_info->waiter[index++], NULL);
-	pthread_mutex_init(&ph_info->waiter_start, NULL);
+		pthread_mutex_init(&ph_info->crowd_ctrl[index++], NULL);
+	pthread_mutex_init(&ph_info->crowd_ctrl_start, NULL);
+	pthread_mutex_init(&ph_info->finish_lock, NULL);
 	return (ph_info);
 }
 

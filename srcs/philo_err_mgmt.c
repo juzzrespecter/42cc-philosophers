@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/09 17:48:00 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/09 17:53:19 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/17 17:15:57 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	input_parser(char *input)
 		index++;
 	while (input[index] >= '0' && input[index] <= '9')
 		index++;
-	return (!input[index]);
+	return (!input[index] && ft_atoi(input) > 0);
 }
 
 int	philo_err_mgmt(int argc, char **argv)

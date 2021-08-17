@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/07 18:26:22 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/09 17:51:18 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/17 17:06:57 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,22 +25,6 @@ static void	crowd_ctrl_starts_new_turn(int index, t_thread_info *ph_info)
 	}
 }
 
-static void	crowd_ctrl_waits_for_turn_to_finish(int index, t_thread_info *ph_info)
-{
-	int	count;
-
-	count = 0;
-	while (count < ph_info->ph_count / 2)
-	{
-		if (ph_info->crowd_ctrl_state[index % ph_info->ph_count])
-		{
-			count += ph_info->crowd_ctrl_state[index % ph_info->ph_count];
-			index += 2;
-		}
-		usleep(100);
-	}
-}
-
 void	*crowd_ctrl_th(void *arg)
 {
 	t_thread_info	*ph_info;
@@ -52,7 +36,7 @@ void	*crowd_ctrl_th(void *arg)
 	while (!ph_info->finish_flag)
 	{
 		crowd_ctrl_starts_new_turn(index, ph_info);
-		crowd_ctrl_waits_for_turn_to_finish(index, ph_info);
+		philo_wait(ph_info->time_to_eat);
 		index = (index + 1) % ph_info->ph_count;
 	}
 	return (NULL);
@@ -67,11 +51,14 @@ void	*metre_th(void *metre_args)
 	{
 		if (ph_info->finished_meals == ph_info->ph_count)
 		{
-			pthread_mutex_lock(&ph_info->lock);
+			pthread_mutex_lock(&ph_info->finish_lock);
 			if (!ph_info->finish_flag)
+			{
+				pthread_mutex_lock(&ph_info->lock);
 				print_status(FINISH_ID, get_time() - ph_info->time_start, -1);
-			ph_info->finish_flag = 1;
-			pthread_mutex_unlock(&ph_info->lock); // check this
+				ph_info->finish_flag = 1;
+			}
+			pthread_mutex_unlock(&ph_info->finish_lock);
 		}
 	}
 	return (NULL);

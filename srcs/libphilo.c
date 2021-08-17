@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ftphilo.c                                          :+:      :+:    :+:   */
+/*   libphilo.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/09 17:43:54 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/09 17:44:41 by danrodri         ###   ########.fr       */
+/*   Created: 2021/08/17 16:44:48 by danrodri          #+#    #+#             */
+/*   Updated: 2021/08/17 17:11:23 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ int	ft_atoi(char *a)
 	index = 0;
 	i = 0;
 	while (a[index] == ' ')
-		i++;
+		index++;
 	if (a[index] == '+')
-		i++;
+		index++;
 	while (a[index] >= '0' && a[index] <= '9')
 	{
 		i = (i * 10) + (a[index] - '0');
@@ -39,6 +39,15 @@ long	get_time(void)
 	gettimeofday(&time_s, NULL);
 	time = time_s.tv_sec * 1000 + (long)time_s.tv_usec / 1000;
 	return (time);
+}
+
+void	philo_wait(long	time_to_wait)
+{
+	long	time_start;
+
+	time_start = get_time();
+	while (get_time() - time_start < time_to_wait)
+		usleep(500);
 }
 
 void	print_status(int status_id, long timestamp, int philo_id)

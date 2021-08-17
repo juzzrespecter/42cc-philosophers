@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 22:00:05 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/04 20:35:07 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/17 17:07:40 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ typedef struct s_data
 	sem_t			*meals;
 	sem_t			*process_lock;
 	sem_t			*start_lock;
-	sem_t			*waiter_lock;
+	sem_t			*waiter;
 }	t_data;
 
 unsigned int	ft_atou(char *a);
@@ -58,9 +58,10 @@ int				ft_isdigit(int c);
 void			print_status(int status_id, long time, int philo_id);
 
 long			get_time(void);
+void			philo_wait(long time_to_wait);
 int				philo_err_mgmt(int argc, char **argv);
 void			init_threads(t_data *data);
-int			ft_atoi(char *a);
+int				ft_atoi(char *a);
 
 void			philosopher_process_starts(int id, t_data *data);
 void			philosopher_thinks(t_data *data);

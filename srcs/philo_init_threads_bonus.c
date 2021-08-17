@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 19:45:29 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/04 20:34:49 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/17 17:32:09 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void	close_and_free(t_data *data)
 	sem_close(data->forks);
 	sem_close(data->process_lock);
 	sem_close(data->start_lock);
-	sem_close(data->waiter_lock);
+	sem_close(data->waiter);
 	free(data->pid_arr);
 	free(data);
 }
@@ -36,11 +36,10 @@ static void	*metre(void *metre_args)
 	{
 		sem_wait(data->meals);
 		finished_meals++;
-		if (finished_meals != data->n_philo)
-			sem_post(data->process_lock);
 		if (data->dead_flag == 1)
 			return (NULL);
 	}
+	sem_wait(data->process_lock);
 	print_status(FINISHED_ID, get_time() - data->time_start, -1);
 	kill(data->pid_arr[0], SIGKILL);
 	return (NULL);
@@ -69,7 +68,7 @@ static void	init_threads_parent_waits(t_data *data)
 	sem_unlink("/meals");
 	sem_unlink("/process_lock");
 	sem_unlink("/start_lock");
-	sem_unlink("/waiter_lock");
+	sem_unlink("/waiter");
 	count = 0;
 	while (count < data->n_philo)
 	{
@@ -102,6 +101,7 @@ void	init_threads(t_data *data)
 		count++;
 	}
 	data->time_start = get_time();
+	data->time_last_meal = data->time_start;
 	while (id < data->n_philo)
 	{
 		data->pid_arr[id] = fork();

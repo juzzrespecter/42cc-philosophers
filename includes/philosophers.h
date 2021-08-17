@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/07 20:52:57 by danrodri          #+#    #+#             */
-/*   Updated: 2021/08/09 17:54:07 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/08/17 16:30:20 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,12 @@ typedef struct s_thread_info
 
 	int				finished_meals;
 	int				finish_flag;
+	pthread_mutex_t	finish_lock;
 	pthread_mutex_t	lock;
 	long			time_start;
 
-	pthread_mutex_t	*waiter;
-	pthread_mutex_t	waiter_start;
-	int				*waiter_state;
+	pthread_mutex_t	*crowd_ctrl;
+	pthread_mutex_t	crowd_ctrl_start;
 }	t_thread_info;
 
 t_thread_info	*thread_info_setup(int argc, char **argv);
@@ -54,7 +54,7 @@ t_thread_info	*thread_info_setup(int argc, char **argv);
 int				get_id(void);
 int				ft_atoi(char *a);
 long			get_time(void);
-void			philo_waits(long time_to_wait);
+void			philo_wait(long time_to_wait);
 void			msg_lock(int status_id, int philo_id, t_thread_info *ph_info);
 void			print_status(int status_id, long timestamp, int philo_id);
 void			*free_data(t_thread_info *ph_info);
@@ -65,7 +65,7 @@ int				philo_thinks(int id, t_thread_info *ph_info);
 int				philo_eats(int id, t_thread_info *ph_info);
 int				philo_sleeps(int id, t_thread_info *ph_info);
 
-void			*waiter_th(void *arg);
+void			*crowd_ctrl_th(void *arg);
 void			*metre_th(void *metre_args);
 void			*philo_th(void *args);
 
