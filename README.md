@@ -1,14 +1,14 @@
-#Philosophers
+# Philosophers
 
-Part of 42 common-core cursus: an introduction to concurrent programming and synchronization in C lang.
+_Part of 42 common-core cursus: an introduction to concurrent programming and synchronization in C lang._
 
 The project consists of a simulation of the Dining Philosophers problem: a number of philosophers
 sit on a round table to think and eat. In between each philosopher, there is a fork, so there
 is the same number of forks and philosophers. In the middle of the table, there is a bowl
 filled with spaghetti, refilled everytime it is emptied. Philosophers are not known for their 
 great motor coordination abilities, so they need two forks to take a meal and start eating.
-There are 3 activities in this simulation: a philosopher can *think*, while they try to get
-access to forks, they can *eat*, and at last they can *sleep* when they are done eating.
+There are 3 activities in this simulation: a philosopher can **think**, while they try to get
+access to forks, they can **eat**, and at last they can **sleep** when they are done eating.
 
 Basically this is a resource sharing problem, in which every philosopher is a thread running
 in parallel, and each fork is a shared resource that must be shared between each pair of threads, 
@@ -19,10 +19,10 @@ die if not inevitable!)
 
 The program accepts four parameters, with a fifth optional one:
 ```
-- [number_of_philosophers]	number of concurrent threads
-- [time_to_die]			in miliseconds, time that must pass since starting a meal
-				until a philo dies.
-- [time_to_eat]			in miliseconds, time a philo takes eating.
+- [number_of_philosophers]		number of concurrent threads
+- [time_to_die]				in miliseconds, time that must pass since starting a meal
+					until a philo dies.
+- [time_to_eat]				in miliseconds, time a philo takes eating.
 - [time_to_sleep]			in miliseconds, time a philo takes sleeping
 - [number_of_times_a_philo_must_eat]	the only way the simulation can end without tragedy,
 the optional argument indicates the number of meals every philo can eat at least before ending the program
@@ -55,4 +55,4 @@ Execution:
 make bonus;
 ./philo_bonus [n_of_philo] [time_to_die] [time_to_eat] [time_to_sleep] ([meal_cond]);
 ```
-Project passed with 125/100
+Project passed with 125/100 ✔️😎
