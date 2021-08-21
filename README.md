@@ -25,7 +25,8 @@ The program accepts four parameters, with a fifth optional one:
 - [time_to_eat]				in miliseconds, time a philo takes eating.
 - [time_to_sleep]			in miliseconds, time a philo takes sleeping
 - [number_of_times_a_philo_must_eat]	the only way the simulation can end without tragedy,
-the optional argument indicates the number of meals every philo can eat at least before ending the program
+					the optional argument indicates the number of meals
+					every philo can eat at least before ending the program
 ```
 
 ### deadlock stategy
