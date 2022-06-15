@@ -30,6 +30,7 @@ void	*free_data(t_thread_info *ph_info)
 	free(ph_info->threads);
 	pthread_mutex_destroy(&ph_info->lock);
 	pthread_mutex_destroy(&ph_info->finish_lock);
+	pthread_mutex_destroy(&ph_info->starve_lock);
 	pthread_mutex_destroy(&ph_info->crowd_ctrl_start);
 	free(ph_info);
 	return (NULL);
@@ -52,6 +53,7 @@ static t_thread_info	*thread_info_shared_state(t_thread_info *ph_info)
 		pthread_mutex_init(&ph_info->crowd_ctrl[index++], NULL);
 	pthread_mutex_init(&ph_info->crowd_ctrl_start, NULL);
 	pthread_mutex_init(&ph_info->finish_lock, NULL);
+	pthread_mutex_init(&ph_info->starve_lock, NULL);
 	return (ph_info);
 }
 

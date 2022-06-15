@@ -14,13 +14,17 @@
 
 static void	philo_health_check(t_thread_info *ph_info)
 {
-	int			index;
+	int		index;
+	long	starve_time;
 
 	index = 0;
 	usleep(ph_info->time_to_die * 1000);
 	while (!ph_info->finish_flag)
 	{
-		if (get_time() - ph_info->time_to_starve[index] > ph_info->time_to_die)
+		pthread_mutex_lock(&ph_info->starve_lock);
+		starve_time = get_time() - ph_info->time_to_starve[index];
+		pthread_mutex_unlock(&ph_info->starve_lock);
+		if (starve_time > ph_info->time_to_die)
 		{
 			pthread_mutex_lock(&ph_info->finish_lock);
 			if (!ph_info->finish_flag)

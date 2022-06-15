@@ -26,7 +26,8 @@ OBJS_BONUS	= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS_BONUS))
 INC		= $(addprefix $(DIR_INC), philosophers.h)
 INC_BONUS	= $(addprefix $(DIR_INC), philosophers_bonus.h)
 
-GCC		= gcc -Wall -Werror -Wextra
+GCC		= gcc
+FLAGS   = -Wall -Werror -Wextra -fsanitize=thread
 RM		= rm -rf
 ifeq (${shell uname}, Linux)
 	LIB = -lpthread
@@ -34,12 +35,12 @@ endif
 
 all:		$(NAME)
 
-$(NAME):	$(OBJS)
-	@$(GCC) -o $(NAME) $(OBJS) $(LIB)
+$(NAME):	$(OBJS) $(INC) Makefile
+	@$(GCC) $(FLAGS) -o $(NAME) $(OBJS) $(LIB)
 	@echo "$(G)[OK]$(ST)\t$(NAME) created successfully."
 
 $(DIR_OBJS)%.o:	$(DIR_SRCS)%.c $(INC)
-	@$(GCC) -c $< -I$(DIR_INC)
+	@$(GCC) $(FLAGS) -c $< -I$(DIR_INC)
 	@echo "$(G)[OK]$(ST)\t$< compiled successfully."
 	@mkdir -p $(DIR_OBJS)
 	@mv $(@F) $(DIR_OBJS)

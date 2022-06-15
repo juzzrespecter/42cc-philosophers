@@ -43,6 +43,7 @@ typedef struct s_thread_info
 	int				finish_flag;
 	pthread_mutex_t	finish_lock;
 	pthread_mutex_t	lock;
+	pthread_mutex_t starve_lock;
 	long			time_start;
 
 	pthread_mutex_t	*crowd_ctrl;

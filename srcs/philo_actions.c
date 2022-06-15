@@ -44,7 +44,9 @@ int	philo_thinks(int id, t_thread_info *ph_info)
 
 int	philo_eats(int id, t_thread_info *ph_info)
 {
+	pthread_mutex_lock(&ph_info->starve_lock);
 	ph_info->time_to_starve[id] = get_time();
+	pthread_mutex_unlock(&ph_info->starve_lock);
 	msg_lock(EAT_ID, id, ph_info);
 	philo_wait(ph_info->time_to_eat);
 	pthread_mutex_unlock(&ph_info->forks[id % ph_info->ph_count]);
