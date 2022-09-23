@@ -27,15 +27,27 @@ void	msg_lock(int status_id, int philo_id, t_thread_info *ph_info)
 	pthread_mutex_unlock(&ph_info->lock);
 }
 
+int ask_for_permission(int id, t_thread_info *ph_info)
+{
+	int	ticket;
+
+	pthread_mutex_lock(&ph_info->crowd_ctrl[id]);
+	ticket = ph_info->crowd_ctrl_id[id];
+	pthread_mutex_unlock(&ph_info->crowd_ctrl[id]);
+	if (!ticket)
+		usleep(500);
+	return ticket;
+}
+
 int	philo_thinks(int id, t_thread_info *ph_info)
 {
-	msg_lock(THINK_ID, id, ph_info);
-	pthread_mutex_lock(&ph_info->crowd_ctrl[id]);
-	pthread_mutex_lock(&ph_info->forks[(id + !(id % 2)) % ph_info->ph_count]);
+	msg_lock(THINK_ID, id, ph_info); 
+	while (ask_for_permission(id, ph_info)) { }
+	pthread_mutex_lock(&ph_info->forks[FIRST_FORK]);
 	if (ph_info->finish_flag)
 		return (1);
 	msg_lock(FORK_ID, id, ph_info);
-	pthread_mutex_lock(&ph_info->forks[(id + (id % 2)) % ph_info->ph_count]);
+	pthread_mutex_lock(&ph_info->forks[SECOND_FORK]);
 	if (ph_info->finish_flag)
 		return (1);
 	msg_lock(FORK_ID, id, ph_info);

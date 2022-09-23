@@ -28,6 +28,7 @@ void	*free_data(t_thread_info *ph_info)
 	free(ph_info->meals);
 	free(ph_info->forks);
 	free(ph_info->threads);
+	free(ph_info->crowd_ctrl_id);
 	pthread_mutex_destroy(&ph_info->lock);
 	pthread_mutex_destroy(&ph_info->finish_lock);
 	pthread_mutex_destroy(&ph_info->starve_lock);
@@ -46,6 +47,7 @@ static t_thread_info	*thread_info_shared_state(t_thread_info *ph_info)
 	ph_info->forks = malloc(sizeof(pthread_mutex_t) * ph_info->ph_count);
 	ph_info->threads = malloc(sizeof(pthread_t) * ph_info->ph_count);
 	ph_info->crowd_ctrl = malloc(sizeof(pthread_mutex_t) * ph_info->ph_count);
+	ph_info->crowd_ctrl_id = malloc(sizeof(int) * ph_info->ph_count);
 	if (!ph_info->time_to_starve || !ph_info->forks || !ph_info->threads
 		   || !ph_info->meals || !ph_info->crowd_ctrl)
 		return (free_data(ph_info));
@@ -72,6 +74,7 @@ t_thread_info	*thread_info_setup(int argc, char **argv)
 		return (NULL);
 	memset(ph_info->time_to_starve, 0, ph_info->ph_count * sizeof(long));
 	memset(ph_info->meals, 0, ph_info->ph_count * sizeof(int));
+	memset(ph_info->crowd_ctrl_id, 0, ph_info->ph_count * sizeof(int));
 	while (index < ph_info->ph_count)
 		pthread_mutex_init(&ph_info->forks[index++], NULL);
 	pthread_mutex_init(&ph_info->lock, 0);

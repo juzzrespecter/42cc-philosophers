@@ -19,8 +19,9 @@ static void	crowd_ctrl_starts_new_turn(int index, t_thread_info *ph_info)
 	count = 0;
 	while (count < ph_info->ph_count / 2)
 	{
-		pthread_mutex_unlock(&ph_info->crowd_ctrl[index % ph_info->ph_count]);
-		index += 2;
+		pthread_mutex_lock(&ph_info->crowd_ctrl[count]);
+		ph_info->crowd_ctrl_id[count] = !(index++ % ph_info->ph_count);
+		pthread_mutex_unlock(&ph_info->crowd_ctrl[count]);
 		count++;
 	}
 }

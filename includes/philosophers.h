@@ -26,6 +26,9 @@
 # define DEAD_ID 4
 # define FINISH_ID 5
 
+# define FIRST_FORK  (id + !(id % 2)) % ph_info->ph_count
+# define SECOND_FORK (id + (id % 2)) % ph_info->ph_count
+
 typedef struct s_thread_info
 {
 	int				ph_count;
@@ -34,21 +37,21 @@ typedef struct s_thread_info
 	int				time_to_sleep;
 	int				times_must_eat;
 
-        long			*time_to_starve;
+	long			*time_to_starve;
 	int				*meals;
 	pthread_mutex_t	*forks;
-	pthread_t	*threads;
+	pthread_t		*threads;
 
-	int		finished_meals;
-	int		finish_flag;
+	int				finished_meals;
+	int				finish_flag;
 	pthread_mutex_t	finish_lock;
 	pthread_mutex_t	lock;
 	pthread_mutex_t starve_lock;
-	long		time_start;
+	long			time_start;
 
 	pthread_mutex_t	*crowd_ctrl;
 	pthread_mutex_t	crowd_ctrl_start;
-        int             *crowd_ctrt_id;
+    int             *crowd_ctrl_id;
 }	t_thread_info;
 
 t_thread_info	*thread_info_setup(int argc, char **argv);

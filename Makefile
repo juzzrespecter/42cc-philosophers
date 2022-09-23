@@ -7,18 +7,18 @@ DIR_SRCS	= srcs/
 DIR_OBJS	= objs/
 DIR_INC		= includes/
 
-SRCS		= philo.c \
+SRCS		= main.c \
 		  philo_err_mgmt.c \
 		  philo_thread_setup.c \
 		  philo_routine.c \
 		  philo_actions.c \
 		  libphilo.c
 
-SRCS_BONUS	= philo_bonus.c \
+SRCS_BONUS	= bonus_main.c \
 		  philo_err_mgmt.c \
-		  philo_init_threads_bonus.c \
-		  philo_actions_bonus.c \
-		  philo_routine_bonus.c \
+		  bonus_philo_init_threads.c \
+		  bonus_philo_actions.c \
+		  bonus_philo_routine.c \
 		  libphilo.c
 
 OBJS		= $(patsubst %.c, $(DIR_OBJS)%.o, $(SRCS))
@@ -27,7 +27,7 @@ INC		= $(addprefix $(DIR_INC), philosophers.h)
 INC_BONUS	= $(addprefix $(DIR_INC), philosophers_bonus.h)
 
 GCC		= gcc
-FLAGS   = -Wall -Werror -Wextra -fsanitize=thread
+FLAGS   = -Wall -Werror -Wextra -fsanitize=thread -g
 RM		= rm -rf
 ifeq (${shell uname}, Linux)
 	LIB = -lpthread

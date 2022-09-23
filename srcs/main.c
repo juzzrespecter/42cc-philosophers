@@ -12,6 +12,16 @@
 
 #include "philosophers.h"
 
+static int check_finish_flag(t_thread_info *ph_info)
+{
+	int	status;
+
+	pthread_mutex_lock(&ph_info->finish_lock);
+	status = ph_info->finish_flag;
+	pthread_mutex_unlock(&ph_info->finish_lock);
+	return status;
+}
+
 static void	philo_health_check(t_thread_info *ph_info)
 {
 	int		index;
@@ -19,7 +29,7 @@ static void	philo_health_check(t_thread_info *ph_info)
 
 	index = 0;
 	usleep(ph_info->time_to_die * 1000);
-	while (!ph_info->finish_flag)
+	while (check_finish_flag(ph_info))
 	{
 		pthread_mutex_lock(&ph_info->starve_lock);
 		starve_time = get_time() - ph_info->time_to_starve[index];
@@ -46,8 +56,8 @@ static void	philo_init_crowd_ctrl(t_thread_info *ph_info)
 
 	index = 0;
 	pthread_mutex_lock(&ph_info->crowd_ctrl_start);
-	while (index < ph_info->ph_count)
-		pthread_mutex_lock(&ph_info->crowd_ctrl[index++]);
+	//while (index < ph_info->ph_count)
+	//	pthread_mutex_lock(&ph_info->crowd_ctrl[index++]);
 	pthread_create(&crowd_ctrl, 0, crowd_ctrl_th, (void *)ph_info);
 	pthread_detach(crowd_ctrl);
 }
