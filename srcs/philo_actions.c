@@ -38,11 +38,18 @@ int	philo_thinks(int id, t_thread_info *ph_info)
 	while (ask_for_permission(id, ph_info)) { }
 	pthread_mutex_lock(&ph_info->forks[FIRST_FORK]);
 	if (finish_status(ph_info))
+	{
+	    	pthread_mutex_unlock(&ph_info->forks[FIRST_FORK]);
 		return (1);
+	}
 	msg_lock(FORK_ID, id, ph_info);
 	pthread_mutex_lock(&ph_info->forks[SECOND_FORK]);
 	if (finish_status(ph_info))
+	{
+	    	pthread_mutex_unlock(&ph_info->forks[FIRST_FORK]);
+			pthread_mutex_unlock(&ph_info->forks[SECOND_FORK]);
 		return (1);
+	}
 	msg_lock(FORK_ID, id, ph_info);
 	return (0);
 }

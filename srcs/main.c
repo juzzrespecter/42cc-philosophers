@@ -75,11 +75,9 @@ static void philo_wait_ending_threads(pthread_t *monitor_threads, t_thread_info 
 	pthread_join(ph_info->threads[idx], NULL);
 	idx++;
     }
-    printf("[log] finished philo threads\n");
-    pthread_join(monitor_threads[METRE], NULL);
-    printf("[log] finished metre thread\n");
+    if (ph_info->times_must_eat != -1)
+	pthread_join(monitor_threads[METRE], NULL);
     pthread_join(monitor_threads[CROWD_CTRL], NULL);
-    printf("[log] finished crowd ctrl thread\n");
 }
 
 int	main(int argc, char **argv)

@@ -34,6 +34,7 @@ void	*crowd_ctrl_th(void *arg)
 	ph_info = (t_thread_info *)arg;
 	index = 0;
 	pthread_mutex_lock(&ph_info->crowd_ctrl_start);
+	pthread_mutex_unlock(&ph_info->crowd_ctrl_start);
 	while (!finish_status(ph_info))
 	{
 		crowd_ctrl_starts_new_turn(index, ph_info);
