@@ -8,14 +8,14 @@ DIR_OBJS	= objs/
 DIR_INC		= includes/
 
 SRCS		= main.c \
-		  philo_err_mgmt.c \
+		  philo_utils.c \
 		  philo_thread_setup.c \
 		  philo_routine.c \
 		  philo_actions.c \
 		  libphilo.c
 
 SRCS_BONUS	= bonus_main.c \
-		  philo_err_mgmt.c \
+		  philo_utils.c \
 		  bonus_philo_init_threads.c \
 		  bonus_philo_actions.c \
 		  bonus_philo_routine.c \

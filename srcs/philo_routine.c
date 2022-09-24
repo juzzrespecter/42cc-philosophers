@@ -34,7 +34,7 @@ void	*crowd_ctrl_th(void *arg)
 	ph_info = (t_thread_info *)arg;
 	index = 0;
 	pthread_mutex_lock(&ph_info->crowd_ctrl_start);
-	while (!ph_info->finish_flag)
+	while (!finish_status(ph_info))
 	{
 		crowd_ctrl_starts_new_turn(index, ph_info);
 		philo_wait(ph_info->time_to_eat);
@@ -48,7 +48,7 @@ void	*metre_th(void *metre_args)
 	t_thread_info	*ph_info;
 
 	ph_info = (t_thread_info *)metre_args;
-	while (!ph_info->finish_flag)
+	while (!finish_status(ph_info))
 	{
 		if (ph_info->finished_meals == ph_info->ph_count)
 		{

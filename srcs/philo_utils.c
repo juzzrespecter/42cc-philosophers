@@ -40,13 +40,34 @@ int	philo_err_mgmt(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		printf("\033[91m[ERROR]\033[0m\t%s\n", err_msg[0]);
+		printf(RED"[ERROR]"FN"\t%s\n", err_msg[0]);
 		return (0);
 	}
 	index = 1;
 	while (argv[index] && input_parser(argv[index]))
 		index++;
 	if (index != argc)
-		printf("\033[91m[ERROR]\033[0m\t%s\n", err_msg[index]);
+		printf(RED"[ERROR]"FN"\t%s\n", err_msg[index]);
 	return (index == argc);
+}
+
+void	msg_lock(int status_id, int philo_id, t_thread_info *ph_info)
+{
+    int th_stat;
+
+    th_stat = finish_status(ph_info); 
+	pthread_mutex_lock(&ph_info->lock);
+	if (!th_stat)
+	    print_status(status_id, get_time() - ph_info->time_start, philo_id);
+	pthread_mutex_unlock(&ph_info->lock);
+}
+
+int finish_status(t_thread_info *ph_info)
+{
+	int	status;
+
+	pthread_mutex_lock(&ph_info->finish_lock);
+	status = ph_info->finish_flag;
+	pthread_mutex_unlock(&ph_info->finish_lock);
+	return status;
 }

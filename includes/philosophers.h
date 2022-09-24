@@ -26,8 +26,14 @@
 # define DEAD_ID 4
 # define FINISH_ID 5
 
+# define CROWD_CTRL 0
+# define METRE 1
+
 # define FIRST_FORK  (id + !(id % 2)) % ph_info->ph_count
 # define SECOND_FORK (id + (id % 2)) % ph_info->ph_count
+
+# define RED "\033[91m"
+# define FN  "\033[0m"
 
 typedef struct s_thread_info
 {
@@ -65,6 +71,7 @@ void			print_status(int status_id, long timestamp, int philo_id);
 void			*free_data(t_thread_info *ph_info);
 
 int				philo_err_mgmt(int argc, char **argv);
+int finish_status(t_thread_info *ph_info);
 
 int				philo_thinks(int id, t_thread_info *ph_info);
 int				philo_eats(int id, t_thread_info *ph_info);
