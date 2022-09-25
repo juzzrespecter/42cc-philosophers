@@ -27,7 +27,7 @@ INC		= $(addprefix $(DIR_INC), philosophers.h)
 INC_BONUS	= $(addprefix $(DIR_INC), philosophers_bonus.h)
 
 GCC		= gcc
-FLAGS   = -Wall -Werror -Wextra -fsanitize=thread -g
+FLAGS   = -Wall -Werror -Wextra -fsanitize=thread  
 RM		= rm -rf
 ifeq (${shell uname}, Linux)
 	LIB = -lpthread

@@ -29,7 +29,7 @@ void	*free_data(t_thread_info *ph_info)
 	free(ph_info->forks);
 	free(ph_info->threads);
 	free(ph_info->crowd_ctrl_id);
-	pthread_mutex_destroy(&ph_info->lock);
+	pthread_mutex_destroy(&ph_info->meal_lock);
 	pthread_mutex_destroy(&ph_info->finish_lock);
 	pthread_mutex_destroy(&ph_info->starve_lock);
 	pthread_mutex_destroy(&ph_info->crowd_ctrl_start);
@@ -77,7 +77,7 @@ t_thread_info	*thread_info_setup(int argc, char **argv)
 	memset(ph_info->crowd_ctrl_id, 0, ph_info->ph_count * sizeof(int));
 	while (index < ph_info->ph_count)
 		pthread_mutex_init(&ph_info->forks[index++], NULL);
-	pthread_mutex_init(&ph_info->lock, 0);
+	pthread_mutex_init(&ph_info->meal_lock, 0);
 	ph_info->time_to_die = ft_atoi(argv[2]);
 	ph_info->time_to_eat = ft_atoi(argv[3]);
 	ph_info->time_to_sleep = ft_atoi(argv[4]);

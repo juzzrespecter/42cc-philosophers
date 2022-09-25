@@ -35,6 +35,15 @@
 # define RED "\033[91m"
 # define FN  "\033[0m"
 
+enum philo_info
+{
+    N_OF_PHILOS,
+    TIME_TO_DIE,
+    TIME_TO_EAT,
+    TIME_TO_SLEEP,
+    TIMES_MUST_EAT
+};
+
 typedef struct s_thread_info
 {
 	int				ph_count;
@@ -51,7 +60,7 @@ typedef struct s_thread_info
 	int				finished_meals;
 	int				finish_flag;
 	pthread_mutex_t	finish_lock;
-	pthread_mutex_t	lock;
+	pthread_mutex_t	meal_lock;
 	pthread_mutex_t starve_lock;
 	long			time_start;
 
@@ -71,7 +80,8 @@ void			print_status(int status_id, long timestamp, int philo_id);
 void			*free_data(t_thread_info *ph_info);
 
 int				philo_err_mgmt(int argc, char **argv);
-int finish_status(t_thread_info *ph_info);
+int m_read_finish_flag(t_thread_info *ph_info);
+int m_read_finished_meals(t_thread_info *ph_info);
 
 int				philo_thinks(int id, t_thread_info *ph_info);
 int				philo_eats(int id, t_thread_info *ph_info);

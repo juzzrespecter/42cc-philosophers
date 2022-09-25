@@ -19,7 +19,7 @@ static void	philo_health_check(t_thread_info *ph_info)
 
 	index = 0;
 	usleep(ph_info->time_to_die * 1000); /* bad */
-	while (!finish_status(ph_info))
+	while (!m_read_finish_flag(ph_info))
 	{
 		pthread_mutex_lock(&ph_info->starve_lock);
 		starve_time = get_time() - ph_info->time_to_starve[index];
@@ -29,10 +29,10 @@ static void	philo_health_check(t_thread_info *ph_info)
 			pthread_mutex_lock(&ph_info->finish_lock);
 			if (!ph_info->finish_flag)
 			{
-				pthread_mutex_lock(&ph_info->lock);
+				pthread_mutex_lock(&ph_info->meal_lock);
 				print_status(DEAD_ID, get_time() - ph_info->time_start, index);
 				ph_info->finish_flag = 1;
-				pthread_mutex_unlock(&ph_info->lock);
+				pthread_mutex_unlock(&ph_info->meal_lock);
 			}
 			pthread_mutex_unlock(&ph_info->finish_lock);
 		}

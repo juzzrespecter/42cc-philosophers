@@ -20,34 +20,44 @@ int	get_id(void)
 	return (id_counter);
 }
 
-static int ask_for_permission(int id, t_thread_info *ph_info)
+static void acquire_ticket(int id, t_thread_info *ph_info)
 {
 	int	ticket;
 
-	pthread_mutex_lock(&ph_info->crowd_ctrl[id]);
-	ticket = ph_info->crowd_ctrl_id[id];
-	pthread_mutex_unlock(&ph_info->crowd_ctrl[id]);
-	if (!ticket)
+	ticket = 0;
+	while (!ticket)
+	{
+	    pthread_mutex_lock(&ph_info->crowd_ctrl[id]);
+	    ticket = ph_info->crowd_ctrl_id[id];
+	    pthread_mutex_unlock(&ph_info->crowd_ctrl[id]);
+	    if (!ticket)
 		usleep(500);
-	return ticket;
+	}
+}
+
+static void return_ticket(int id, t_thread_info *ph_info)
+{
+    pthread_mutex_lock(&ph_info->crowd_ctrl[id]);
+    ph_info->crowd_ctrl_id[id] = 0;
+    pthread_mutex_unlock(&ph_info->crowd_ctrl[id]);
 }
 
 int	philo_thinks(int id, t_thread_info *ph_info)
 {
-	msg_lock(THINK_ID, id, ph_info); 
-	while (ask_for_permission(id, ph_info)) { }
+	msg_lock(THINK_ID, id, ph_info);
+	acquire_ticket(id, ph_info);
 	pthread_mutex_lock(&ph_info->forks[FIRST_FORK]);
-	if (finish_status(ph_info))
+	if (m_read_finish_flag(ph_info))
 	{
 	    	pthread_mutex_unlock(&ph_info->forks[FIRST_FORK]);
 		return (1);
 	}
 	msg_lock(FORK_ID, id, ph_info);
 	pthread_mutex_lock(&ph_info->forks[SECOND_FORK]);
-	if (finish_status(ph_info))
+	if (m_read_finish_flag(ph_info))
 	{
 	    	pthread_mutex_unlock(&ph_info->forks[FIRST_FORK]);
-			pthread_mutex_unlock(&ph_info->forks[SECOND_FORK]);
+		pthread_mutex_unlock(&ph_info->forks[SECOND_FORK]);
 		return (1);
 	}
 	msg_lock(FORK_ID, id, ph_info);
@@ -66,16 +76,17 @@ int	philo_eats(int id, t_thread_info *ph_info)
 	ph_info->meals[id] += (ph_info->times_must_eat != -1);
 	if (ph_info->meals[id] == ph_info->times_must_eat)
 	{
-		pthread_mutex_lock(&ph_info->lock);
+		pthread_mutex_lock(&ph_info->meal_lock);
 		ph_info->finished_meals++;
-		pthread_mutex_unlock(&ph_info->lock);
+		pthread_mutex_unlock(&ph_info->meal_lock);
 	}
-	return (finish_status(ph_info));
+	return_ticket(id, ph_info);
+	return (m_read_finish_flag(ph_info));
 }
 
 int	philo_sleeps(int id, t_thread_info *ph_info)
 {
 	msg_lock(SLEEP_ID, id, ph_info);
 	philo_wait(ph_info->time_to_sleep);
-	return (finish_status(ph_info));
+	return (m_read_finish_flag(ph_info));
 }

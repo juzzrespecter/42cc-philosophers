@@ -55,14 +55,14 @@ void	msg_lock(int status_id, int philo_id, t_thread_info *ph_info)
 {
     int th_stat;
 
-    th_stat = finish_status(ph_info); 
-	pthread_mutex_lock(&ph_info->lock);
+    th_stat = m_read_finish_flag(ph_info); 
+	pthread_mutex_lock(&ph_info->meal_lock);
 	if (!th_stat)
 	    print_status(status_id, get_time() - ph_info->time_start, philo_id);
-	pthread_mutex_unlock(&ph_info->lock);
+	pthread_mutex_unlock(&ph_info->meal_lock);
 }
 
-int finish_status(t_thread_info *ph_info)
+int m_read_finish_flag(t_thread_info *ph_info)
 {
 	int	status;
 
@@ -70,4 +70,14 @@ int finish_status(t_thread_info *ph_info)
 	status = ph_info->finish_flag;
 	pthread_mutex_unlock(&ph_info->finish_lock);
 	return status;
+}
+
+int m_read_finished_meals(t_thread_info *ph_info)
+{
+    int fin_meal_stat;
+
+    pthread_mutex_lock(&ph_info->meal_lock);
+    fin_meal_stat = ph_info->finished_meals;
+    pthread_mutex_unlock(&ph_info->meal_lock);
+    return fin_meal_stat;
 }
