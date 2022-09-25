@@ -51,9 +51,12 @@ typedef struct s_data
 	sem_t			*process_lock;
 	sem_t			*start_lock;
 	sem_t			*waiter;
+
+    void *thread_lock;
 }	t_data;
 
 unsigned int	ft_atou(char *a);
+char *ft_strncpy(char *, char *, int);
 int				ft_isdigit(int c);
 void			print_status(int status_id, long time, int philo_id);
 

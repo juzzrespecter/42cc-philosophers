@@ -35,15 +35,6 @@
 # define RED "\033[91m"
 # define FN  "\033[0m"
 
-enum philo_info
-{
-    N_OF_PHILOS,
-    TIME_TO_DIE,
-    TIME_TO_EAT,
-    TIME_TO_SLEEP,
-    TIMES_MUST_EAT
-};
-
 typedef struct s_thread_info
 {
 	int				ph_count;

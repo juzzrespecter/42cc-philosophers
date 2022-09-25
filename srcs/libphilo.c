@@ -12,6 +12,20 @@
 
 #include "philosophers.h"
 
+char *ft_strncpy(char *dst, char *src, int n)
+{
+    int idx;
+
+    idx = 0;
+    while (src[idx] && idx < n)
+    {
+	dst[idx] = src[idx];
+	idx++;
+    }
+    dst[idx] = 0;
+    return dst;
+}
+
 int	ft_atoi(char *a)
 {
 	int	index;

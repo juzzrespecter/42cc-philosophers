@@ -73,11 +73,16 @@ static void philo_wait_ending_threads(pthread_t *monitor_threads, t_thread_info 
     while (idx < ph_info->ph_count)
     {
 	pthread_join(ph_info->threads[idx], NULL);
+	printf("[END] joining thread (%d)...\n", idx+1);
 	idx++;
     }
-    if (ph_info->times_must_eat != -1)
+    if (ph_info->times_must_eat != -1)\
+    {
 	pthread_join(monitor_threads[METRE], NULL);
+	printf("[END] joining metre...\n");
+    }
     pthread_join(monitor_threads[CROWD_CTRL], NULL);
+    printf("[END] joining crowd ctrl...\n");
 }
 
 int	main(int argc, char **argv)

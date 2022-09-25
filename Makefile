@@ -27,7 +27,7 @@ INC		= $(addprefix $(DIR_INC), philosophers.h)
 INC_BONUS	= $(addprefix $(DIR_INC), philosophers_bonus.h)
 
 GCC		= gcc
-FLAGS   = -Wall -Werror -Wextra -fsanitize=thread  
+FLAGS   = -Wall -Werror -Wextra -fsanitize=thread -g
 RM		= rm -rf
 ifeq (${shell uname}, Linux)
 	LIB = -lpthread
@@ -62,7 +62,7 @@ re:		fclean all
 bonus:		$(NAME_BONUS)
 
 $(NAME_BONUS):	$(OBJS_BONUS)
-	@$(GCC) -o $(NAME_BONUS) $(OBJS_BONUS) $(LIB)
+	@$(GCC) $(FLAGS) -o $(NAME_BONUS) $(OBJS_BONUS) $(LIB)
 	@echo "$(G)[OK]$(ST)\t$(NAME_BONUS) created successfully."
 
 normi:

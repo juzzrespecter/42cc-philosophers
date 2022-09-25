@@ -32,7 +32,9 @@ void	philosopher_thinks(t_data *data)
 void	philosopher_eats(t_data *data)
 {
 	print_lock(EAT_ID, data);
+	sem_wait(data->thread_lock);
 	data->time_last_meal = get_time();
+	sem_post(data->thread_lock);
 	data->finished_meals += (data->times_must_eat != -1);
 	philo_wait(data->time_to_eat);
 	sem_post(data->waiter);

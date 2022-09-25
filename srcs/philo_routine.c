@@ -63,18 +63,19 @@ void	*metre_th(void *metre_args)
 	t_thread_info	*ph_info;
 
 	ph_info = (t_thread_info *)metre_args;
-	while (!m_read_finish_flag(ph_info))
+	while (!m_read_finish_flag(ph_info)) /* */
 	{
 	    if (m_read_finished_meals(ph_info) == ph_info->ph_count)
 	    {
 			pthread_mutex_lock(&ph_info->finish_lock);
 			if (!ph_info->finish_flag)
 			{
-				pthread_mutex_lock(&ph_info->meal_lock);
+			    pthread_mutex_lock(&ph_info->meal_lock); /**/
 				print_status(FINISH_ID, get_time() - ph_info->time_start, -1);
 				ph_info->finish_flag = 1;
 			}
 			pthread_mutex_unlock(&ph_info->finish_lock);
+			break ;
 		}
 	}
 	return (NULL);
