@@ -25,7 +25,7 @@ static void acquire_ticket(int id, t_thread_info *ph_info)
 	int	ticket;
 
 	ticket = 0;
-	while (!ticket)
+	while (!ticket && !m_read_finish_flag(ph_info))
 	{
 	    pthread_mutex_lock(&ph_info->crowd_ctrl[id]);
 	    ticket = ph_info->crowd_ctrl_id[id];
@@ -35,7 +35,7 @@ static void acquire_ticket(int id, t_thread_info *ph_info)
 	}
 }
 
-static void return_ticket(int id, t_thread_info *ph_info)
+void return_ticket(int id, t_thread_info *ph_info)
 {
     pthread_mutex_lock(&ph_info->crowd_ctrl[id]);
     ph_info->crowd_ctrl_id[id] = 0;

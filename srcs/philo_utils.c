@@ -56,10 +56,10 @@ void	msg_lock(int status_id, int philo_id, t_thread_info *ph_info)
     int th_stat;
 
     th_stat = m_read_finish_flag(ph_info); 
-	pthread_mutex_lock(&ph_info->meal_lock);
-	if (!th_stat)
-	    print_status(status_id, get_time() - ph_info->time_start, philo_id);
-	pthread_mutex_unlock(&ph_info->meal_lock);
+    pthread_mutex_lock(&ph_info->meal_lock);
+    if (!th_stat)
+	print_status(status_id, get_time() - ph_info->time_start, philo_id);
+    pthread_mutex_unlock(&ph_info->meal_lock);
 }
 
 int m_read_finish_flag(t_thread_info *ph_info)

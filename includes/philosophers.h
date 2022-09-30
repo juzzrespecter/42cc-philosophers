@@ -78,6 +78,8 @@ int				philo_thinks(int id, t_thread_info *ph_info);
 int				philo_eats(int id, t_thread_info *ph_info);
 int				philo_sleeps(int id, t_thread_info *ph_info);
 
+void return_ticket(int id, t_thread_info *ph_info);
+
 void			*crowd_ctrl_th(void *arg);
 void			*metre_th(void *metre_args);
 void			*philo_th(void *args);
